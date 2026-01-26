@@ -1,0 +1,79 @@
+/* Desktop additional styles */
+#desktop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 30px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 15px;
+}
+
+/* Make sure body doesn't scroll */
+html,
+body {
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+}
+
+/* Hidden utility */
+.hidden {
+    display: none !important;
+}
+
+/* Window area for z-index layering */
+#window-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+/* Nice scrollbar for window content */
+.window-content::-webkit-scrollbar {
+    width: 16px;
+}
+
+.window-content::-webkit-scrollbar-track {
+    background: #ECE9D8;
+    border-left: 1px solid #888;
+}
+
+.window-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(to right, #E0E0E0 0%, #C0C0C0 50%, #A0A0A0 100%);
+    border: 1px solid #888;
+}
+
+.window-content::-webkit-scrollbar-button {
+    background: #ECE9D8;
+    border: 1px solid #888;
+    height: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .desktop-icon {
+        width: 70px;
+    }
+
+    .desktop-icon .icon-img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .window {
+        width: 95vw !important;
+        left: 2.5vw !important;
+    }
+
+    #start-menu {
+        width: 100%;
+    }
+}

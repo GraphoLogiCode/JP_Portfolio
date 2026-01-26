@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benjamin Park - Portfolio</title>
+    <meta name="description" content="Benjamin Park's personal portfolio - Computer Science student at Penn State">
+    <link rel="stylesheet" href="styles/xp.css">
+    <link rel="stylesheet" href="styles/desktop.css">
+</head>
+
+<body>
+    <div id="desktop">
+        <!-- Desktop Icons -->
+        <div class="desktop-icon" data-target="resume">
+            <div class="icon-img">
+                <svg viewBox="0 0 32 32" fill="none">
+                    <path
+                        d="M2 8C2 6.89543 2.89543 6 4 6H12L14 8H28C29.1046 8 30 8.89543 30 10V26C30 27.1046 29.1046 28 28 28H4C2.89543 28 2 27.1046 2 26V8Z"
+                        fill="#F7D774" />
+                    <path d="M2 10H30V26C30 27.1046 29.1046 28 28 28H4C2.89543 28 2 27.1046 2 26V10Z" fill="#FFEB99" />
+                    <rect x="10" y="14" width="12" height="8" rx="1" fill="#E74C3C" />
+                    <text x="16" y="20" text-anchor="middle" fill="white" font-size="5" font-weight="bold">PDF</text>
+                </svg>
+            </div>
+            <div class="icon-label">Resume</div>
+        </div>
+
+        <div class="desktop-icon" data-target="projects">
+            <div class="icon-img">
+                <svg viewBox="0 0 32 32" fill="none">
+                    <path
+                        d="M2 8C2 6.89543 2.89543 6 4 6H12L14 8H28C29.1046 8 30 8.89543 30 10V26C30 27.1046 29.1046 28 28 28H4C2.89543 28 2 27.1046 2 26V8Z"
+                        fill="#F7D774" />
+                    <path d="M2 10H30V26C30 27.1046 29.1046 28 28 28H4C2.89543 28 2 27.1046 2 26V10Z" fill="#FFEB99" />
+                </svg>
+            </div>
+            <div class="icon-label">My Projects</div>
+        </div>
+
+        <div class="desktop-icon" data-target="about">
+            <div class="icon-img">
+                <svg viewBox="0 0 32 32" fill="none">
+                    <rect x="4" y="2" width="24" height="28" rx="1" fill="#FFF" />
+                    <rect x="4" y="2" width="24" height="28" rx="1" stroke="#999" stroke-width="1" />
+                    <rect x="7" y="6" width="12" height="2" fill="#333" />
+                    <rect x="7" y="10" width="18" height="1" fill="#AAA" />
+                    <rect x="7" y="13" width="16" height="1" fill="#AAA" />
+                    <rect x="7" y="16" width="18" height="1" fill="#AAA" />
+                    <rect x="7" y="19" width="14" height="1" fill="#AAA" />
+                </svg>
+            </div>
+            <div class="icon-label">About Me</div>
+        </div>
+
+        <div class="desktop-icon" data-target="contact">
+            <div class="icon-img">
+                <svg viewBox="0 0 32 32" fill="none">
+                    <rect x="2" y="6" width="28" height="20" rx="2" fill="#FFF" />
+                    <rect x="2" y="6" width="28" height="20" rx="2" stroke="#3B82F6" stroke-width="2" />
+                    <path d="M4 8L16 16L28 8" stroke="#3B82F6" stroke-width="2" />
+                </svg>
+            </div>
+            <div class="icon-label">Contact</div>
+        </div>
+
+        <!-- Windows will be injected here -->
+        <div id="window-area"></div>
+    </div>
+
+    <div id="taskbar">
+        <button id="start-button">
+            <svg class="start-icon" viewBox="0 0 20 20" fill="none">
+                <rect x="1" y="1" width="8" height="8" fill="#F65314" />
+                <rect x="11" y="1" width="8" height="8" fill="#7CBB00" />
+                <rect x="1" y="11" width="8" height="8" fill="#00A1F1" />
+                <rect x="11" y="11" width="8" height="8" fill="#FFBB00" />
+            </svg>
+            start
+        </button>
+        <div id="taskbar-divider"></div>
+        <div id="taskbar-apps">
+            <!-- Active windows -->
+        </div>
+        <div id="system-tray">
+            <span id="volume-icon" title="Sound On">🔊</span>
+            <div id="clock">12:00 PM</div>
+        </div>
+    </div>
+
+    <div id="start-menu" class="hidden">
+        <div class="start-header">
+            <div class="user-account">
+                <div class="user-icon">👤</div>
+                <span class="username">Benjamin Park</span>
+            </div>
+        </div>
+        <div class="start-body">
+            <div class="start-column-left">
+                <div class="start-item" data-action="resume">📄 My Resume</div>
+                <div class="start-item" data-action="projects">📁 My Projects</div>
+                <div class="start-item" data-action="about">📝 About Me</div>
+                <div class="start-item" data-action="contact">✉️ Contact</div>
+            </div>
+            <div class="start-column-right">
+                <div class="start-item" id="toggle-sound">🔊 Sound: ON</div>
+            </div>
+        </div>
+        <div class="start-footer">
+            <div class="start-button-footer" id="btn-shutdown">⏻ Turn Off</div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="scripts/sounds.js"></script>
+    <script src="scripts/windowManager.js"></script>
+    <script src="scripts/app.js"></script>
+</body>
+
+</html>
