@@ -16,6 +16,10 @@ class WindowManager {
     bindEvents() {
         document.addEventListener('mousemove', (e) => this.onMouseMove(e));
         document.addEventListener('mouseup', () => this.onMouseUp());
+
+        // Touch events for mobile
+        document.addEventListener('touchmove', (e) => this.onTouchMove(e), { passive: false });
+        document.addEventListener('touchend', () => this.onTouchEnd());
     }
 
     openWindow(id, title, contentHtml) {
@@ -91,6 +95,7 @@ class WindowManager {
 
         const titleBar = win.querySelector('.title-bar');
         titleBar.addEventListener('mousedown', (e) => this.startDrag(e, win, id));
+        titleBar.addEventListener('touchstart', (e) => this.startDragTouch(e, win, id), { passive: false });
 
         // Close button
         win.querySelector('.control-close').addEventListener('click', (e) => {
@@ -270,6 +275,53 @@ class WindowManager {
     }
 
     onMouseUp() {
+        if (this.currentDragWindow) {
+            this.currentDragWindow.style.opacity = '1';
+        }
+        this.isDragging = false;
+        this.currentDragWindow = null;
+    }
+
+    // --- Touch Events for Mobile ---
+    startDragTouch(e, winEl, id) {
+        if (e.target.closest('.title-bar-controls')) return;
+
+        const winObj = this.windows.find(w => w.id === id);
+        if (winObj && winObj.maximized) return; // Don't drag maximized windows
+
+        this.isDragging = true;
+        this.currentDragWindow = winEl;
+
+        const touch = e.touches[0];
+        const rect = winEl.getBoundingClientRect();
+        this.dragOffset.x = touch.clientX - rect.left;
+        this.dragOffset.y = touch.clientY - rect.top;
+
+        // Brief visual feedback
+        winEl.style.opacity = '0.95';
+
+        // Prevent scrolling while dragging
+        e.preventDefault();
+    }
+
+    onTouchMove(e) {
+        if (!this.isDragging || !this.currentDragWindow) return;
+
+        e.preventDefault();
+
+        const touch = e.touches[0];
+        let x = touch.clientX - this.dragOffset.x;
+        let y = touch.clientY - this.dragOffset.y;
+
+        // Keep window on screen
+        x = Math.max(-50, Math.min(x, window.innerWidth - 100));
+        y = Math.max(0, Math.min(y, window.innerHeight - 60));
+
+        this.currentDragWindow.style.left = `${x}px`;
+        this.currentDragWindow.style.top = `${y}px`;
+    }
+
+    onTouchEnd() {
         if (this.currentDragWindow) {
             this.currentDragWindow.style.opacity = '1';
         }
