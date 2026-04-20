@@ -9,6 +9,27 @@ class SoundManager {
             startup: null // Will be a chord
         };
         this.enabled = true;
+        this.audioCtx = null;
+    }
+
+    initAudioContext() {
+        if (!this.audioCtx) {
+            try {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioContextClass) {
+                    this.audioCtx = new AudioContextClass();
+                }
+            } catch (e) {
+                console.error("Failed to initialize AudioContext", e);
+            }
+        }
+
+        // Resume context if suspended (common browser requirement for autoplay)
+        if (this.audioCtx && this.audioCtx.state === 'suspended') {
+            this.audioCtx.resume();
+        }
+
+        return this.audioCtx;
     }
 
     createBeep(frequency, duration) {
@@ -21,8 +42,10 @@ class SoundManager {
         const sound = this.sounds[soundName];
         if (!sound) return;
 
+        const audioCtx = this.initAudioContext();
+        if (!audioCtx) return;
+
         try {
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
 
@@ -38,18 +61,21 @@ class SoundManager {
             oscillator.start(audioCtx.currentTime);
             oscillator.stop(audioCtx.currentTime + sound.duration);
         } catch (e) {
-            // Audio not supported, fail silently
+            // Audio error, fail silently
         }
     }
 
     playStartup() {
         if (!this.enabled) return;
+
+        const audioCtx = this.initAudioContext();
+        if (!audioCtx) return;
+
         // Play a simple chord sequence for startup
         const notes = [523, 659, 784, 1047]; // C5, E5, G5, C6
         notes.forEach((freq, i) => {
             setTimeout(() => {
                 try {
-                    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
                     osc.connect(gain);
