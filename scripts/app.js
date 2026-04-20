@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div style="display: flex; flex-direction: column; height: 100%;">
                     <div style="padding: 10px; background: #f0f0f0; border-bottom: 1px solid #ccc; display: flex; align-items: center; gap: 10px;">
                         <span style="font-weight: bold;">📄 Benjamin Park - Resume</span>
-                        <a href="assets/resume.pdf" target="_blank" class="xp-button" style="padding: 4px 12px; text-decoration: none; font-size: 11px; margin-left: auto;">
+                        <a href="assets/resume.pdf" target="_blank" rel="noopener noreferrer" class="xp-button" style="padding: 4px 12px; text-decoration: none; font-size: 11px; margin-left: auto;">
                             📥 Download PDF
                         </a>
                     </div>
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <strong>RepoComPass</strong>
                     <p style="margin: 8px 0 0 0; color: #555;">A Chrome extension that analyzes job postings and generates personalized portfolio project ideas tailored to your skills and target roles. Helps computer science students and developers build projects that directly align with real job requirements.</p>
                     <p style="margin: 8px 0 0 0; color: #777; font-size: 11px;"><strong>Tech Stack:</strong> HTML, CSS, JavaScript</p>
-                    <p style="margin: 8px 0 0 0;"><a href="https://github.com/GraphoLogiCode/RepoComPass" target="_blank" style="color: #0066CC; text-decoration: none;">🔗 View on GitHub</a></p>
+                    <p style="margin: 8px 0 0 0;"><a href="https://github.com/GraphoLogiCode/RepoComPass" target="_blank" rel="noopener noreferrer" style="color: #0066CC; text-decoration: none;">🔗 View on GitHub</a></p>
                 </div>
                 <div style="margin: 15px 0; padding: 15px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 3px;">
                     <strong>🖥️ Windows XP Portfolio</strong>
@@ -171,13 +171,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     <tr>
                         <td style="padding: 10px 0; color: #666;"><strong>GitHub:</strong></td>
                         <td style="padding: 10px 0;">
-                            <a href="https://github.com/GraphoLogiCode" target="_blank" style="color: #0066CC;">github.com/GraphoLogiCode</a>
+                            <a href="https://github.com/GraphoLogiCode" target="_blank" rel="noopener noreferrer" style="color: #0066CC;">github.com/GraphoLogiCode</a>
                         </td>
                     </tr>
                     <tr>
                         <td style="padding: 10px 0; color: #666;"><strong>LinkedIn:</strong></td>
                         <td style="padding: 10px 0;">
-                            <a href="https://www.linkedin.com/in/joosung-park-may2027/" target="_blank" style="color: #0066CC;">linkedin.com/in/joosung-park-may2027</a>
+                            <a href="https://www.linkedin.com/in/joosung-park-may2027/" target="_blank" rel="noopener noreferrer" style="color: #0066CC;">linkedin.com/in/joosung-park-may2027</a>
                         </td>
                     </tr>
                 </table>
