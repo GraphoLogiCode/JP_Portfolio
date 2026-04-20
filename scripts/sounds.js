@@ -6,7 +6,6 @@ class SoundManager {
             click: this.createBeep(800, 0.05),
             open: this.createBeep(600, 0.1),
             close: this.createBeep(400, 0.08),
-            error: this.createBeep(200, 0.15),
             startup: null // Will be a chord
         };
         this.enabled = true;
