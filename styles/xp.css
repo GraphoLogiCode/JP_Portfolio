@@ -44,6 +44,8 @@ body {
 }
 
 .desktop-icon {
+    position: relative;
+    z-index: 1;
     width: 80px;
     text-align: center;
     color: white;
@@ -94,8 +96,9 @@ body {
 /* ===== WINDOWS ===== */
 .window {
     position: absolute;
-    width: 450px;
-    height: 350px;
+    /* Big enough to read comfortably, never larger than the screen */
+    width: min(760px, calc(100vw - 16px));
+    height: min(560px, calc(100vh - 90px));
     background-color: var(--xp-beige);
     border: 3px solid var(--xp-blue);
     border-radius: 8px 8px 0 0;
@@ -112,7 +115,7 @@ body {
 }
 
 .title-bar {
-    height: 28px;
+    height: 32px;
     background: linear-gradient(to bottom, #0A246A 0%, #3168D5 8%, #4C87E8 40%, #2A63D1 88%, #0A246A 100%);
     display: flex;
     align-items: center;
@@ -120,7 +123,7 @@ body {
     padding: 0 4px 0 8px;
     color: white;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 13px;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.6);
     cursor: default;
 }
@@ -135,14 +138,20 @@ body {
     text-overflow: ellipsis;
 }
 
+.title-bar-text svg {
+    width: 15px;
+    height: 15px;
+    flex: 0 0 auto;
+}
+
 .title-bar-controls {
     display: flex;
     gap: 2px;
 }
 
 .control-box {
-    width: 21px;
-    height: 21px;
+    width: 24px;
+    height: 24px;
     border-radius: 3px;
     display: flex;
     align-items: center;
@@ -193,23 +202,38 @@ body {
     border: 2px inset #888;
     flex: 1;
     overflow: auto;
-    padding: 12px;
-    font-size: 12px;
+    padding: 18px 22px;
+    font-size: 14px;
     color: black;
     user-select: text;
-    line-height: 1.5;
+    line-height: 1.6;
+}
+
+/* App-like windows (e.g. the PDF viewer) fill the frame edge to edge */
+.window-content.flush {
+    padding: 0;
+    overflow: hidden;
 }
 
 .window-content h2 {
-    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 10px 0;
     color: #003399;
-    font-size: 16px;
+    font-size: 20px;
+}
+
+.window-content h2 svg {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 auto;
 }
 
 .window-content h3 {
-    margin: 12px 0 6px 0;
+    margin: 14px 0 6px 0;
     color: #336699;
-    font-size: 13px;
+    font-size: 15px;
 }
 
 .window-content hr {
@@ -302,6 +326,7 @@ body {
     font-size: 11px;
     display: flex;
     align-items: center;
+    gap: 5px;
     padding: 0 8px;
     cursor: pointer;
     white-space: nowrap;
@@ -317,6 +342,17 @@ body {
 .taskbar-item.active {
     background: linear-gradient(to bottom, #1E52B7 20%, #2866D0 100%);
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.taskbar-item svg {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 auto;
+}
+
+.taskbar-item span {
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #system-tray {
@@ -335,7 +371,13 @@ body {
 
 #volume-icon {
     cursor: pointer;
-    font-size: 14px;
+    width: 16px;
+    height: 16px;
+    color: white;
+}
+
+#volume-icon:hover {
+    color: #D6E5F8;
 }
 
 /* ===== START MENU ===== */
@@ -370,7 +412,13 @@ body {
 }
 
 .user-icon {
-    font-size: 32px;
+    width: 34px;
+    height: 34px;
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    border-radius: 6px;
+    padding: 3px;
 }
 
 .username {
@@ -399,11 +447,26 @@ body {
 }
 
 .start-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     padding: 6px 10px;
     cursor: pointer;
     border-radius: 3px;
     margin: 2px 0;
     transition: background-color 0.1s;
+}
+
+/* Small icons used in the start menu; they follow the text color on hover */
+.menu-icon {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+    color: #2A3540;
+}
+
+.start-item:hover .menu-icon {
+    color: white;
 }
 
 .start-item:hover {
@@ -426,6 +489,9 @@ body {
 }
 
 .start-button-footer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     padding: 5px 12px;
     background: linear-gradient(to bottom, #D08040 0%, #C06020 100%);
     color: white;
@@ -433,6 +499,12 @@ body {
     cursor: pointer;
     font-size: 11px;
     text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+.start-button-footer .menu-icon {
+    color: white;
+    width: 13px;
+    height: 13px;
 }
 
 .start-button-footer:hover {

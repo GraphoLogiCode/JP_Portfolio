@@ -24,12 +24,25 @@ class SoundManager {
             }
         }
 
-        // Resume context if suspended (common browser requirement for autoplay)
-        if (this.audioCtx && this.audioCtx.state === 'suspended') {
-            this.audioCtx.resume();
-        }
-
         return this.audioCtx;
+    }
+
+    // Browsers keep audio paused until the user has clicked or tapped once.
+    // This runs the given function only when audio is truly ready, so sounds
+    // stay in sync with what is on screen instead of piling up and playing late.
+    whenAudioReady(run) {
+        const audioCtx = this.initAudioContext();
+        if (!audioCtx) return;
+
+        if (audioCtx.state === 'running') {
+            run(audioCtx);
+        } else {
+            audioCtx.resume().then(() => {
+                if (audioCtx.state === 'running') {
+                    run(audioCtx);
+                }
+            }).catch(() => { /* audio not allowed yet, skip this sound */ });
+        }
     }
 
     createBeep(frequency, duration) {
@@ -42,52 +55,51 @@ class SoundManager {
         const sound = this.sounds[soundName];
         if (!sound) return;
 
-        const audioCtx = this.initAudioContext();
-        if (!audioCtx) return;
+        this.whenAudioReady((audioCtx) => {
+            try {
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
 
-        try {
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
 
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
+                oscillator.frequency.value = sound.frequency;
+                oscillator.type = 'square'; // Retro sound
 
-            oscillator.frequency.value = sound.frequency;
-            oscillator.type = 'square'; // Retro sound
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + sound.duration);
 
-            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + sound.duration);
-
-            oscillator.start(audioCtx.currentTime);
-            oscillator.stop(audioCtx.currentTime + sound.duration);
-        } catch (e) {
-            // Audio error, fail silently
-        }
+                oscillator.start(audioCtx.currentTime);
+                oscillator.stop(audioCtx.currentTime + sound.duration);
+            } catch (e) {
+                // Audio error, fail silently
+            }
+        });
     }
 
     playStartup() {
         if (!this.enabled) return;
 
-        const audioCtx = this.initAudioContext();
-        if (!audioCtx) return;
-
-        // Play a simple chord sequence for startup
-        const notes = [523, 659, 784, 1047]; // C5, E5, G5, C6
-        notes.forEach((freq, i) => {
-            setTimeout(() => {
+        this.whenAudioReady((audioCtx) => {
+            // A rising chord: C5, E5, G5, C6.
+            // Each note is scheduled on the audio clock (not setTimeout),
+            // so the timing is exact and the notes never drift apart.
+            const notes = [523, 659, 784, 1047];
+            notes.forEach((freq, i) => {
                 try {
+                    const startAt = audioCtx.currentTime + i * 0.15;
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
                     osc.connect(gain);
                     gain.connect(audioCtx.destination);
                     osc.frequency.value = freq;
                     osc.type = 'sine';
-                    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                    osc.start(audioCtx.currentTime);
-                    osc.stop(audioCtx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.08, startAt);
+                    gain.gain.exponentialRampToValueAtTime(0.01, startAt + 0.3);
+                    osc.start(startAt);
+                    osc.stop(startAt + 0.3);
                 } catch (e) { }
-            }, i * 150);
+            });
         });
     }
 }

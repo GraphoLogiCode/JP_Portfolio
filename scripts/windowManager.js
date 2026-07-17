@@ -22,14 +22,16 @@ class WindowManager {
         document.addEventListener('touchend', () => this.onTouchEnd());
     }
 
-    openWindow(id, title, contentHtml) {
+    // opts.flush = true removes the content padding, for windows that hold
+    // an app-like view (e.g. the PDF viewer) instead of a text document.
+    openWindow(id, title, contentHtml, opts = {}) {
         const existing = this.windows.find(w => w.id === id);
         if (existing) {
             this.focusWindow(id);
             return;
         }
 
-        const winEl = this.createWindowDOM(id, title, contentHtml);
+        const winEl = this.createWindowDOM(id, title, contentHtml, opts);
         this.desktop.appendChild(winEl);
 
         const taskbarItem = this.createTaskbarItem(id, title);
@@ -47,12 +49,13 @@ class WindowManager {
         this.windows.push(winObj);
         this.focusWindow(id);
 
-        // Position window with cascade effect
+        // Position window with cascade effect,
+        // but never let it start off the edge of the screen
         const offset = (this.windows.length - 1) * 25;
-        const startX = 80 + offset;
-        const startY = 50 + offset;
-        winEl.style.top = `${startY}px`;
-        winEl.style.left = `${startX}px`;
+        const maxX = Math.max(4, window.innerWidth - winEl.offsetWidth - 4);
+        const maxY = Math.max(4, window.innerHeight - winEl.offsetHeight - 34);
+        winEl.style.left = `${Math.min(80 + offset, maxX)}px`;
+        winEl.style.top = `${Math.min(50 + offset, maxY)}px`;
 
         // Play open sound
         if (typeof soundManager !== 'undefined') {
@@ -60,7 +63,7 @@ class WindowManager {
         }
     }
 
-    createWindowDOM(id, title, contentHtml) {
+    createWindowDOM(id, title, contentHtml, opts = {}) {
         const win = document.createElement('div');
         win.classList.add('window');
         win.id = `win-${id}`;
@@ -69,7 +72,7 @@ class WindowManager {
         win.innerHTML = `
             <div class="title-bar" id="title-${id}">
                 <div class="title-bar-text">
-                    📁 ${title}
+                    <svg viewBox="0 0 32 32"><use href="#i-${id}" /></svg> ${title}
                 </div>
                 <div class="title-bar-controls">
                     <div class="control-box control-min" title="Minimize">_</div>
@@ -78,7 +81,7 @@ class WindowManager {
                 </div>
             </div>
             <div class="window-body">
-                <div class="window-content">
+                <div class="window-content${opts.flush ? ' flush' : ''}">
                     ${contentHtml}
                 </div>
             </div>
@@ -128,7 +131,9 @@ class WindowManager {
     createTaskbarItem(id, title) {
         const item = document.createElement('div');
         item.classList.add('taskbar-item');
-        item.innerText = title;
+        // Same icon as the window's title bar, so taskbar and window match
+        item.innerHTML = `<svg viewBox="0 0 32 32"><use href="#i-${id}" /></svg><span></span>`;
+        item.querySelector('span').innerText = title;
         item.addEventListener('click', () => {
             if (typeof soundManager !== 'undefined') soundManager.play('click');
             this.toggleWindowFromTaskbar(id);
@@ -212,17 +217,20 @@ class WindowManager {
             win.style.height = winObj.prevPosition.height;
             winObj.maximized = false;
         } else {
-            // Maximize
+            // Maximize. An empty width/height here is fine: restoring an
+            // empty value hands sizing back to the stylesheet default.
             winObj.prevPosition = {
                 top: win.style.top,
                 left: win.style.left,
-                width: win.style.width || '450px',
-                height: win.style.height || '350px'
+                width: win.style.width,
+                height: win.style.height
             };
             win.style.top = '0';
             win.style.left = '0';
             win.style.width = '100%';
-            win.style.height = 'calc(100% - 30px)'; // Leave room for taskbar
+            // The desktop area already stops above the taskbar,
+            // so 100% fills everything without covering it
+            win.style.height = '100%';
             winObj.maximized = true;
         }
 
