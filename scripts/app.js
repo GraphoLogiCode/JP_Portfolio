@@ -69,7 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function toggleSound() {
-        soundManager.enabled = !soundManager.enabled;
+        // setEnabled also saves the choice, so mute survives a refresh
+        soundManager.setEnabled(!soundManager.enabled);
         updateSoundUI();
         // Small click so turning sound ON gives instant feedback
         soundManager.play('click');
@@ -416,6 +417,7 @@ Type 'help' to see what's here.</div>
             } else if (cmd === 'exit' || cmd === 'close') {
                 wm.closeWindow('terminal');
             } else {
+                soundManager.play('error');
                 print(`'${parts[0]}' is not recognized as an internal or external command,\noperable program or batch file.`);
             }
         }
@@ -490,9 +492,15 @@ Type 'help' to see what's here.</div>
         ensureTerminalIcon();
     }
 
-    // Shutdown button (easter egg)
+    // Shutdown button (easter egg).
+    // The falling shutdown chord starts first; the screen swap waits a
+    // moment so the sound isn't cut off by the page change.
     document.getElementById('btn-shutdown')?.addEventListener('click', () => {
-        soundManager.play('close');
+        soundManager.play('shutdown');
+        setTimeout(showShutdownScreen, 600);
+    });
+
+    function showShutdownScreen() {
         document.body.innerHTML = `
             <div style="display: flex; align-items: center; justify-content: center; height: 100vh; background: linear-gradient(135deg, #1E5799 0%, #207cca 50%, #2989d8 100%); color: #fff; font-family: Tahoma, sans-serif;">
                 <div style="text-align: center;">
@@ -502,5 +510,5 @@ Type 'help' to see what's here.</div>
                 </div>
             </div>
         `;
-    });
+    }
 });

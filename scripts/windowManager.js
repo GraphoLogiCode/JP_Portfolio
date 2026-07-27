@@ -131,11 +131,11 @@ class WindowManager {
     createTaskbarItem(id, title) {
         const item = document.createElement('div');
         item.classList.add('taskbar-item');
-        // Same icon as the window's title bar, so taskbar and window match
+        // Same icon as the window's title bar, so taskbar and window match.
+        // No click sound here: the minimize/restore sounds already answer.
         item.innerHTML = `<svg viewBox="0 0 32 32"><use href="#i-${id}" /></svg><span></span>`;
         item.querySelector('span').innerText = title;
         item.addEventListener('click', () => {
-            if (typeof soundManager !== 'undefined') soundManager.play('click');
             this.toggleWindowFromTaskbar(id);
         });
         return item;
@@ -169,6 +169,7 @@ class WindowManager {
         if (winObj.minimized) {
             winObj.element.style.display = 'flex';
             winObj.minimized = false;
+            if (typeof soundManager !== 'undefined') soundManager.play('restore');
         }
 
         this.zIndexCounter++;
@@ -189,7 +190,7 @@ class WindowManager {
         const winObj = this.windows.find(w => w.id === id);
         if (!winObj) return;
 
-        if (typeof soundManager !== 'undefined') soundManager.play('click');
+        if (typeof soundManager !== 'undefined') soundManager.play('minimize');
 
         winObj.minimized = true;
         winObj.element.style.display = 'none';
