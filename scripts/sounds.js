@@ -40,6 +40,14 @@ class SoundManager {
                 { t: 0.00, f: 220, d: 0.12, g: 0.45, w: 'square' },
                 { t: 0.13, f: 175, d: 0.16, g: 0.40, w: 'square' }
             ],
+            // Quick rising fanfare for the Explorer achievement
+            tada: [
+                { t: 0.00, f: 392, d: 0.12, g: 0.50, w: 'triangle' },
+                { t: 0.10, f: 523, d: 0.12, g: 0.50, w: 'triangle' },
+                { t: 0.20, f: 659, d: 0.12, g: 0.50, w: 'triangle' },
+                { t: 0.30, f: 784, d: 0.35, g: 0.55, w: 'triangle' },
+                { t: 0.30, f: 1046, d: 0.35, g: 0.30, w: 'sine' }
+            ],
             // Rising chord (C5 E5 G5 C6): the machine waking up
             startup: [
                 { t: 0.00, f: 523, d: 0.30, g: 0.55, w: 'sine' },

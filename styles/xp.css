@@ -251,6 +251,66 @@ body {
     margin: 4px 0;
 }
 
+/* ===== TRAY BALLOON (achievement notification) =====
+   The yellow tooltip balloon XP used for tray notifications.
+   It pops up above the system tray and points down at it. */
+.xp-balloon {
+    position: fixed;
+    right: 12px;
+    bottom: 44px;
+    width: 300px;
+    background: #FFFFE1;
+    border: 1px solid #767676;
+    border-radius: 6px;
+    padding: 10px 12px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.35);
+    z-index: 20000;
+    font-size: 12px;
+    color: #000;
+    animation: balloon-in 0.25s ease-out;
+}
+
+@keyframes balloon-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Little pointer under the balloon, aimed at the tray */
+.xp-balloon::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    right: 30px;
+    border: 10px solid transparent;
+    border-top-color: #FFFFE1;
+    border-bottom: 0;
+}
+
+.xp-balloon-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.xp-balloon-close {
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0 4px;
+    color: #444;
+}
+
+.xp-balloon-close:hover {
+    color: #000;
+}
+
+.xp-balloon p {
+    margin: 0;
+    line-height: 1.5;
+}
+
 /* ===== TERMINAL (hidden easter egg) ===== */
 .terminal-app {
     height: 100%;

@@ -231,7 +231,53 @@ Type 'help' to see what's here.</div>
             wm.openWindow(key, titleMap[key], contentMap[key], flushWindows.includes(key) ? { flush: true } : {});
             if (key === 'resume') renderResumePdf();
             if (key === 'terminal') setupTerminal();
+            noteWindowOpened(key);
         }
+    }
+
+    // ---- Explorer achievement ----
+    // A visitor who opens all four windows clearly cared enough to look at
+    // everything, so they get a little XP tray balloon as a thank-you —
+    // and it unlocks the hidden Command Prompt as a reward. This also gives
+    // phone visitors a way in, since they can't type the Konami code.
+    const CORE_WINDOWS = ['resume', 'projects', 'about', 'contact'];
+    const openedWindows = new Set();
+
+    function noteWindowOpened(key) {
+        if (!CORE_WINDOWS.includes(key)) return;
+        openedWindows.add(key);
+        if (openedWindows.size === CORE_WINDOWS.length && !localStorage.getItem('explorerAchieved')) {
+            localStorage.setItem('explorerAchieved', '1');
+            // Small pause so the balloon lands after the fourth window opens
+            setTimeout(showExplorerBalloon, 700);
+        }
+    }
+
+    function showExplorerBalloon() {
+        const alreadyHadTerminal = !!localStorage.getItem('terminalUnlocked');
+
+        const balloon = document.createElement('div');
+        balloon.className = 'xp-balloon';
+        balloon.innerHTML = `
+            <div class="xp-balloon-title">
+                <span>🏆 Achievement unlocked: Explorer</span>
+                <span class="xp-balloon-close" title="Close">✕</span>
+            </div>
+            <p>You opened everything on this desktop — thanks for looking around!</p>
+            <p style="margin-top: 6px;">${alreadyHadTerminal
+                ? 'You already found the secret Command Prompt. You really have seen it all.'
+                : 'A secret <strong>Command Prompt</strong> just appeared on the desktop. Try typing <strong>help</strong>.'}</p>
+        `;
+        document.body.appendChild(balloon);
+        soundManager.play('tada');
+
+        // The reward: the hidden terminal becomes visible
+        localStorage.setItem('terminalUnlocked', '1');
+        ensureTerminalIcon();
+
+        const dismiss = () => balloon.remove();
+        balloon.querySelector('.xp-balloon-close').addEventListener('click', dismiss);
+        setTimeout(dismiss, 15000);
     }
 
     // Draws each page of the resume PDF onto a canvas inside the window.
