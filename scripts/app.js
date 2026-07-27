@@ -7,27 +7,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // at page load would silently fail — this way it actually plays.
     document.addEventListener('pointerdown', () => soundManager.playStartup(), { once: true });
 
-    // Desktop Icon Handling
-    const icons = document.querySelectorAll('.desktop-icon');
-
-    icons.forEach(icon => {
+    // Desktop Icon Handling.
+    // wireDesktopIcon is reused for icons added later (like the hidden
+    // terminal below), so an unlocked icon behaves exactly like a built-in one.
+    function wireDesktopIcon(icon) {
         icon.addEventListener('dblclick', () => {
-            const target = icon.getAttribute('data-target');
-            openContent(target);
+            openContent(icon.getAttribute('data-target'));
         });
 
         // Selection state
         icon.addEventListener('click', (e) => {
             e.stopPropagation();
             soundManager.play('click');
-            icons.forEach(i => i.classList.remove('selected'));
+            document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
             icon.classList.add('selected');
         });
-    });
+    }
+
+    document.querySelectorAll('.desktop-icon').forEach(wireDesktopIcon);
 
     // Deselect icons when clicking desktop
     document.getElementById('desktop').addEventListener('click', () => {
-        icons.forEach(i => i.classList.remove('selected'));
+        document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
     });
 
     // Start Menu Handling
@@ -200,6 +201,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 </table>
                 <br>
                 <p style="color: #555;">I am currently looking for internship opportunities. Feel free to reach out! 👋</p>
+            `,
+            'terminal': `
+                <div class="terminal-app">
+                    <div class="terminal-output" id="term-output">Benjamin Park's Portfolio [Command Line]
+Type 'help' to see what's here.</div>
+                    <div class="terminal-input-line">
+                        <span class="term-prompt">C:\\Users\\Benjamin&gt;</span>
+                        <input type="text" id="term-input" autocomplete="off" spellcheck="false" autocapitalize="off" />
+                    </div>
+                </div>
             `
         };
 
@@ -207,14 +218,18 @@ document.addEventListener('DOMContentLoaded', () => {
             'resume': 'Resume',
             'projects': 'My Projects',
             'about': 'About Me.txt - Notepad',
-            'contact': 'Contact'
+            'contact': 'Contact',
+            'terminal': 'Command Prompt'
         };
 
+        // The resume and terminal windows hold full-bleed app views,
+        // so they open without the usual text padding.
+        const flushWindows = ['resume', 'terminal'];
+
         if (contentMap[key]) {
-            // The resume window holds a full-bleed PDF viewer,
-            // so it opens without the usual text padding.
-            wm.openWindow(key, titleMap[key], contentMap[key], key === 'resume' ? { flush: true } : {});
+            wm.openWindow(key, titleMap[key], contentMap[key], flushWindows.includes(key) ? { flush: true } : {});
             if (key === 'resume') renderResumePdf();
+            if (key === 'terminal') setupTerminal();
         }
     }
 
@@ -298,6 +313,181 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {
             holder.innerHTML = fallback;
         }
+    }
+
+    // Wires up the hidden terminal window: reads a typed line, decides what
+    // it means, and prints a response. Runs once per window (dataset.wired
+    // guards against re-wiring if the window is ever reopened).
+    function setupTerminal() {
+        const output = document.getElementById('term-output');
+        const input = document.getElementById('term-input');
+        if (!output || !input || input.dataset.wired) return;
+        input.dataset.wired = '1';
+
+        const history = [];
+        let historyIndex = 0;
+
+        function print(text) {
+            output.textContent += '\n' + text;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function openAndNote(target, label) {
+            openContent(target);
+            print(`(opening ${label}...)`);
+        }
+
+        function handleCat(fileArg) {
+            const file = fileArg.trim().toLowerCase();
+            const files = {
+                'about_me.txt': 'CS + Math student at Penn State, rows, draws, and wants to build a house someday.',
+                'contact.txt': 'pjs84833@gmail.com | jqp6076@psu.edu | github.com/GraphoLogiCode',
+                'resume.pdf': 'Binary file. Try double-clicking the Resume icon instead.',
+                'house_blueprint.dwg': 'Blueprint not found. Ask again after graduation.',
+                'secrets.txt': 'You found the secret file. There is nothing here yet — check back later.'
+            };
+            if (!file) print('usage: cat <file>');
+            else if (files[file]) print(files[file]);
+            else print(`cat: ${fileArg}: No such file or directory`);
+        }
+
+        function runCommand(raw) {
+            print('C:\\Users\\Benjamin> ' + raw);
+            const line = raw.trim();
+            if (!line) return;
+
+            history.push(raw);
+            historyIndex = history.length;
+
+            const parts = line.split(/\s+/);
+            const cmd = parts[0].toLowerCase();
+            const rest = parts.slice(1).join(' ');
+            const lower = line.toLowerCase();
+
+            if (cmd === 'help') {
+                print([
+                    'Available commands:',
+                    '  whoami        - who is running this session',
+                    '  about         - quick bio',
+                    '  resume        - open the resume window',
+                    '  projects      - open the projects window',
+                    '  contact       - open the contact window',
+                    '  ls / dir      - list files here',
+                    '  cat <file>    - view a file',
+                    '  build house   - long-term goal status',
+                    '  date          - today\'s date',
+                    '  cls / clear   - clear the screen',
+                    '  exit          - close this window'
+                ].join('\n'));
+            } else if (cmd === 'whoami') {
+                print('BENJAMIN\\joosung_park\n(박주성 — preferred name: Benjamin Park)\nComputer Science + Math, Penn State \'27');
+            } else if (lower === 'about --full' || lower === 'about -full') {
+                openAndNote('about', 'About Me');
+            } else if (cmd === 'about') {
+                print("CS student at Penn State, minoring in math. Rows, draws, and wants to build a house someday — logically supported and well-designed. Type 'about --full' for the full window.");
+            } else if (cmd === 'resume') {
+                openAndNote('resume', 'Resume');
+            } else if (cmd === 'projects') {
+                openAndNote('projects', 'My Projects');
+            } else if (cmd === 'contact') {
+                openAndNote('contact', 'Contact');
+            } else if (cmd === 'ls' || cmd === 'dir') {
+                print(' Directory of C:\\Users\\Benjamin\n\nresume.pdf\nprojects\\\nabout_me.txt\ncontact.txt\nhouse_blueprint.dwg   [in progress]\nsecrets.txt');
+            } else if (cmd === 'cat') {
+                handleCat(rest);
+            } else if (lower === 'sudo make me a sandwich') {
+                print('Okay.');
+            } else if (lower === 'make me a sandwich') {
+                print('Permission denied. Try asking nicer... or use sudo.');
+            } else if (cmd === 'sudo' && rest.toLowerCase() === 'rm -rf /') {
+                print("Nice try. This portfolio doesn't have a root to delete.");
+            } else if (lower === 'rm -rf /') {
+                print('Permission denied.');
+            } else if (cmd === 'sudo' && !rest) {
+                print('usage: sudo <command>');
+            } else if (cmd === 'sudo') {
+                print(`Running "${rest}" as admin doesn't make it any more real. Nice try though.`);
+            } else if (lower === 'build house' || lower === 'cd house') {
+                print('Status: Foundation not yet started.\nETA: after I finish building a career first.');
+            } else if (cmd === 'date') {
+                print(new Date().toDateString());
+            } else if (cmd === 'cls' || cmd === 'clear') {
+                output.textContent = "Benjamin Park's Portfolio [Command Line]";
+            } else if (cmd === 'exit' || cmd === 'close') {
+                wm.closeWindow('terminal');
+            } else {
+                print(`'${parts[0]}' is not recognized as an internal or external command,\noperable program or batch file.`);
+            }
+        }
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const val = input.value;
+                input.value = '';
+                runCommand(val);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (!history.length) return;
+                historyIndex = Math.max(0, historyIndex - 1);
+                input.value = history[historyIndex] || '';
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (!history.length) return;
+                historyIndex = Math.min(history.length, historyIndex + 1);
+                input.value = history[historyIndex] || '';
+            }
+        });
+
+        input.focus();
+        document.getElementById('win-terminal')?.addEventListener('mousedown', () => input.focus());
+    }
+
+    // ---- Hidden terminal easter egg ----
+    // Enter the classic Konami code (↑ ↑ ↓ ↓ ← → ← → B A) anywhere on the
+    // desktop to unlock a Command Prompt icon. The unlock is remembered
+    // (localStorage) so the icon doesn't disappear on refresh.
+    const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    let konamiProgress = 0;
+
+    document.addEventListener('keydown', (e) => {
+        // Don't hijack typing inside the terminal or anywhere else
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+        const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+        if (key === KONAMI[konamiProgress]) {
+            konamiProgress++;
+            if (konamiProgress === KONAMI.length) {
+                konamiProgress = 0;
+                unlockTerminal();
+            }
+        } else {
+            konamiProgress = (key === KONAMI[0]) ? 1 : 0;
+        }
+    });
+
+    function ensureTerminalIcon() {
+        if (document.querySelector('.desktop-icon[data-target="terminal"]')) return;
+        const icon = document.createElement('div');
+        icon.className = 'desktop-icon';
+        icon.setAttribute('data-target', 'terminal');
+        icon.innerHTML = `
+            <div class="icon-img"><svg viewBox="0 0 32 32"><use href="#i-terminal" /></svg></div>
+            <div class="icon-label">Command Prompt</div>
+        `;
+        wireDesktopIcon(icon);
+        document.getElementById('desktop').appendChild(icon);
+    }
+
+    function unlockTerminal() {
+        localStorage.setItem('terminalUnlocked', '1');
+        ensureTerminalIcon();
+        soundManager.playStartup();
+        openContent('terminal');
+    }
+
+    // Restore the icon on future visits, without reopening the window
+    if (localStorage.getItem('terminalUnlocked')) {
+        ensureTerminalIcon();
     }
 
     // Shutdown button (easter egg)

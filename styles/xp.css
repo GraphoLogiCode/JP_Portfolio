@@ -251,6 +251,52 @@ body {
     margin: 4px 0;
 }
 
+/* ===== TERMINAL (hidden easter egg) ===== */
+.terminal-app {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #0C0C0C;
+    color: #CCCCCC;
+    font-family: 'Cascadia Mono', 'Consolas', 'Courier New', monospace;
+    font-size: 13px;
+    padding: 10px 12px;
+}
+
+.terminal-output {
+    flex: 1;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.6;
+    margin-bottom: 6px;
+}
+
+.terminal-input-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+}
+
+.term-prompt {
+    color: #3DDC63;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+#term-input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #FFFFFF;
+    font-family: inherit;
+    font-size: inherit;
+    caret-color: #3DDC63;
+}
+
 /* ===== TASKBAR ===== */
 #taskbar {
     position: absolute;
