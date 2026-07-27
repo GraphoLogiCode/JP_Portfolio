@@ -265,8 +265,6 @@ Type 'help' to see what's here.</div>
     }
 
     function showExplorerBalloon() {
-        const alreadyHadTerminal = !!localStorage.getItem('terminalUnlocked');
-
         const balloon = document.createElement('div');
         balloon.className = 'xp-balloon';
         balloon.innerHTML = `
@@ -275,14 +273,12 @@ Type 'help' to see what's here.</div>
                 <span class="xp-balloon-close" title="Close">✕</span>
             </div>
             <p>You opened everything on this desktop — thanks for looking around!</p>
-            <p style="margin-top: 6px;">${alreadyHadTerminal
-                ? 'You already found the secret Command Prompt. You really have seen it all.'
-                : 'A secret <strong>Command Prompt</strong> just appeared on the desktop. Try typing <strong>help</strong>.'}</p>
         `;
         document.body.appendChild(balloon);
         soundManager.play('tada');
 
-        // The reward: the hidden terminal becomes visible
+        // Quiet reward: the hidden terminal icon appears on the desktop
+        // without being announced — sharp-eyed visitors will spot it
         localStorage.setItem('terminalUnlocked', '1');
         ensureTerminalIcon();
 
