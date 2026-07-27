@@ -241,11 +241,22 @@ Type 'help' to see what's here.</div>
     // and it unlocks the hidden Command Prompt as a reward. This also gives
     // phone visitors a way in, since they can't type the Konami code.
     const CORE_WINDOWS = ['resume', 'projects', 'about', 'contact'];
-    const openedWindows = new Set();
+
+    // Progress is saved between visits, so opening two windows today and
+    // two tomorrow still counts — a refresh doesn't reset the hunt.
+    let openedWindows;
+    try {
+        openedWindows = new Set(JSON.parse(localStorage.getItem('exploredWindows') || '[]'));
+    } catch (e) {
+        openedWindows = new Set();
+    }
 
     function noteWindowOpened(key) {
         if (!CORE_WINDOWS.includes(key)) return;
-        openedWindows.add(key);
+        if (!openedWindows.has(key)) {
+            openedWindows.add(key);
+            localStorage.setItem('exploredWindows', JSON.stringify([...openedWindows]));
+        }
         if (openedWindows.size === CORE_WINDOWS.length && !localStorage.getItem('explorerAchieved')) {
             localStorage.setItem('explorerAchieved', '1');
             // Small pause so the balloon lands after the fourth window opens
