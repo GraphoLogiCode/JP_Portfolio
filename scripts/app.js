@@ -103,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // full-size image in assets/art/ and a small copy with the same name in
     // assets/art/thumbs/, then add a line here.
     const ART_PIECES = [
-        { file: 'portrait-after-rembrandt.jpg', title: 'Portrait Study, after Rembrandt', detail: 'Oil painting' },
         { file: 'mirror-figure-front.jpg', title: 'Mirror Figure (front)', detail: 'Sculpture, mixed media' },
         { file: 'mirror-figure-side.jpg', title: 'Mirror Figure (side)', detail: 'Sculpture, mixed media' },
         { file: 'strap-figure.jpg', title: 'Untitled Figure', detail: 'Sculpture' },
