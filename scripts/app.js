@@ -119,6 +119,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h2><svg viewBox="0 0 32 32"><use href="#i-projects" /></svg> My Projects</h2>
                 <hr>
                 <div style="margin: 15px 0; padding: 15px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 3px;">
+                    <strong>PathFinder</strong> <span style="color: #777;">— Yale Hackathon 2026</span>
+                    <p style="margin: 8px 0 0 0; color: #555;">A satellite-image disaster-response tool built in a two-person team. I engineered the AI/ML and backend: YOLO damage detection, a FastAPI routing engine, and a geo-referencing pipeline.</p>
+                    <p style="margin: 8px 0 0 0; color: #777; font-size: 12px;"><strong>Tech Stack:</strong> Python, YOLO, FastAPI</p>
+                    <p style="margin: 8px 0 0 0;"><a href="https://github.com/GraphoLogiCode/PathFinder" target="_blank" rel="noopener noreferrer" style="color: #0066CC; text-decoration: none;">🔗 View on GitHub</a></p>
+                </div>
+                <div style="margin: 15px 0; padding: 15px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 3px;">
+                    <strong>RippleJourney</strong> <span style="color: #777;">— March 2026</span>
+                    <p style="margin: 8px 0 0 0; color: #555;">A full-stack app built in 3 days that turns a raw research idea into a step-by-step roadmap, with AI-matched faculty mentors found through the Google Scholar API.</p>
+                    <p style="margin: 8px 0 0 0; color: #777; font-size: 12px;"><strong>Tech Stack:</strong> Next.js, TypeScript, Prisma, PostgreSQL (pgvector)</p>
+                    <p style="margin: 8px 0 0 0;"><a href="https://ripple-journey.vercel.app" target="_blank" rel="noopener noreferrer" style="color: #0066CC; text-decoration: none;">🔗 Live Demo</a></p>
+                </div>
+                <div style="margin: 15px 0; padding: 15px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 3px;">
                     <strong>RepoComPass</strong>
                     <p style="margin: 8px 0 0 0; color: #555;">A Chrome extension that analyzes job postings and generates personalized portfolio project ideas tailored to your skills and target roles. Helps computer science students and developers build projects that directly align with real job requirements.</p>
                     <p style="margin: 8px 0 0 0; color: #777; font-size: 12px;"><strong>Tech Stack:</strong> HTML, CSS, JavaScript</p>
@@ -128,7 +140,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     <strong>Windows XP Portfolio</strong>
                     <p style="margin: 8px 0 0 0; color: #555;">This website! A retro-styled personal portfolio built with vanilla HTML, CSS, and JavaScript.</p>
                 </div>
-                <p style="color: #888; font-size: 12px; margin-top: 20px;">More projects coming soon...</p>
+                <h3>Research</h3>
+                <div style="margin: 15px 0; padding: 15px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 3px;">
+                    <strong>Can an AI Understand a Minecraft Builder's Intentions?</strong> <span style="color: #777;">— MC REU 2026</span>
+                    <p style="margin: 8px 0 0 0; color: #555;">Built an end-to-end data pipeline (instrumented game capture, automated post-session processing, human-in-the-loop labeling) and trained a transformer decoder for next-action prediction, reaching 71% top-1 accuracy. Repurposed frozen foundation models (VPT, MineCLIP, Uni3D) to infer human intent with lightweight heads.</p>
+                    <p style="margin: 8px 0 0 0; color: #777; font-size: 12px;"><strong>Tech Stack:</strong> Python, Transformers, VPT, MineCLIP, Uni3D</p>
+                </div>
+                <div style="margin: 15px 0; padding: 15px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 3px;">
+                    <strong>Fine-Tuning LLMs for C++ Code Smell Detection</strong> <span style="color: #777;">— MC REU 2025</span>
+                    <p style="margin: 8px 0 0 0; color: #555;">Fine-tuned two DeepSeek-Coder 1.3B models to detect code smells and generate automated fixes for open-source C++ game engine code, using LoRA/QLoRA to cut GPU memory needs.</p>
+                    <p style="margin: 8px 0 0 0; color: #777; font-size: 12px;"><strong>Tech Stack:</strong> Python, DeepSeek-Coder, LoRA/QLoRA</p>
+                    <p style="margin: 8px 0 0 0;"><a href="https://github.com/GraphoLogiCode/C-FineTuneDeepSeek" target="_blank" rel="noopener noreferrer" style="color: #0066CC; text-decoration: none;">🔗 View on GitHub</a></p>
+                </div>
             `,
             'about': `
                 <h2><svg viewBox="0 0 32 32"><use href="#i-about" /></svg> About Me</h2>
@@ -155,8 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td style="padding: 8px 0;">Computer Science</td>
                     </tr>
                     <tr>
-                        <td style="padding: 8px 0; color: #666;"><strong>Minor:</strong></td>
-                        <td style="padding: 8px 0;">Mathematics</td>
+                        <td style="padding: 8px 0; color: #666;"><strong>Minors:</strong></td>
+                        <td style="padding: 8px 0;">Mathematics &amp; Art</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 0; color: #666;"><strong>Activities:</strong></td>
