@@ -98,6 +98,100 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('clock').innerText = timeString;
     }
 
+    // ---- Art folder ----
+    // One entry per piece, shown in this order. To add artwork: put a
+    // full-size image in assets/art/ and a small copy with the same name in
+    // assets/art/thumbs/, then add a line here.
+    const ART_PIECES = [
+        { file: 'portrait-after-rembrandt.jpg', title: 'Portrait Study, after Rembrandt', detail: 'Oil painting' },
+        { file: 'mirror-figure-front.jpg', title: 'Mirror Figure (front)', detail: 'Sculpture, mixed media' },
+        { file: 'mirror-figure-side.jpg', title: 'Mirror Figure (side)', detail: 'Sculpture, mixed media' },
+        { file: 'strap-figure.jpg', title: 'Untitled Figure', detail: 'Sculpture' },
+        { file: 'self-portrait-2019.jpg', title: 'Self-Portrait', detail: 'Drawing, 2019' },
+        { file: 'two-children-2019.jpg', title: 'Two Children', detail: 'Charcoal, 2019' },
+        { file: 'skull-still-life-2019.jpg', title: 'Still Life with Skull', detail: 'Charcoal, 2019' }
+    ];
+
+    // Explorer-style "Thumbnails" view of the art folder
+    function artFolderHtml() {
+        const thumbs = ART_PIECES.map((piece, i) => `
+            <button class="art-thumb" data-index="${i}" title="${piece.title}">
+                <span class="art-thumb-frame"><img src="assets/art/thumbs/${piece.file}" alt="${piece.title}" loading="lazy"></span>
+                <span class="art-thumb-label">${piece.title}</span>
+            </button>
+        `).join('');
+        return `
+            <div class="art-explorer">
+                <div class="art-toolbar">
+                    <svg viewBox="0 0 32 32"><use href="#i-art" /></svg>
+                    <span>C:\\Users\\Benjamin\\My Art</span>
+                </div>
+                <div class="art-grid">${thumbs}</div>
+                <div class="art-status">${ART_PIECES.length} objects — click a picture to view it</div>
+            </div>
+        `;
+    }
+
+    function setupArtFolder() {
+        const folder = document.getElementById('win-art');
+        if (folder.dataset.wired) return;
+        folder.dataset.wired = '1';
+        folder.querySelectorAll('.art-thumb').forEach(thumb => {
+            thumb.addEventListener('click', () => openArtViewer(Number(thumb.dataset.index)));
+        });
+    }
+
+    // A small "Windows Picture and Fax Viewer": one window that steps
+    // through the pieces. Opening another piece reuses the same window.
+    let artIndex = 0;
+
+    function openArtViewer(index) {
+        wm.openWindow('artviewer', 'Picture Viewer', `
+            <div class="art-viewer">
+                <div class="art-viewer-stage"><img id="art-viewer-img" alt=""></div>
+                <div class="art-viewer-bar">
+                    <button class="xp-button" id="art-prev" aria-label="Previous picture">◀ Back</button>
+                    <div class="art-viewer-caption">
+                        <strong id="art-viewer-title"></strong>
+                        <span id="art-viewer-detail"></span>
+                    </div>
+                    <button class="xp-button" id="art-next" aria-label="Next picture">Next ▶</button>
+                </div>
+            </div>
+        `, { flush: true });
+
+        const viewer = document.getElementById('win-artviewer');
+        if (!viewer.dataset.wired) {
+            viewer.dataset.wired = '1';
+            document.getElementById('art-prev').addEventListener('click', () => stepArt(-1));
+            document.getElementById('art-next').addEventListener('click', () => stepArt(1));
+        }
+        showArt(index);
+    }
+
+    function showArt(index) {
+        artIndex = (index + ART_PIECES.length) % ART_PIECES.length;
+        const piece = ART_PIECES[artIndex];
+        const img = document.getElementById('art-viewer-img');
+        img.src = `assets/art/${piece.file}`;
+        img.alt = piece.title;
+        document.getElementById('art-viewer-title').textContent = piece.title;
+        document.getElementById('art-viewer-detail').textContent =
+            `${piece.detail} · ${artIndex + 1} of ${ART_PIECES.length}`;
+    }
+
+    function stepArt(delta) {
+        soundManager.play('click');
+        showArt(artIndex + delta);
+    }
+
+    // Arrow keys flip pictures while the viewer is the front window
+    document.addEventListener('keydown', (e) => {
+        if (wm.activeWindowId !== 'artviewer' || e.target.tagName === 'INPUT') return;
+        if (e.key === 'ArrowLeft') stepArt(-1);
+        if (e.key === 'ArrowRight') stepArt(1);
+    });
+
     // Content Loader
     function openContent(key) {
         const contentMap = {
@@ -143,16 +237,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h3>Research</h3>
                 <div style="margin: 15px 0; padding: 15px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 3px;">
                     <strong>Can an AI Understand a Minecraft Builder's Intentions?</strong> <span style="color: #777;">— MC REU 2026</span>
-                    <p style="margin: 8px 0 0 0; color: #555;">Built an end-to-end data pipeline (instrumented game capture, automated post-session processing, human-in-the-loop labeling) and trained a transformer decoder for next-action prediction, reaching 71% top-1 accuracy. Repurposed frozen foundation models (VPT, MineCLIP, Uni3D) to infer human intent with lightweight heads.</p>
-                    <p style="margin: 8px 0 0 0; color: #777; font-size: 12px;"><strong>Tech Stack:</strong> Python, Transformers, VPT, MineCLIP, Uni3D</p>
+                    <p style="margin: 8px 0 0 0; color: #555;">A multimodal AI system that infers a Minecraft builder's goal from raw observation: frozen VPT, MineCLIP, and Uni3D encoders feed learned likelihood heads and a Bayesian belief over five goal categories. It reached 0.375 goal accuracy on 24 unseen real sessions, the best of five methods tested. I also trained a 17.5M-parameter Transformer decoder that predicts the builder's next action with 71% accuracy.</p>
+                    <p style="margin: 8px 0 0 0; color: #777; font-size: 12px;"><strong>Tech Stack:</strong> Python, PyTorch, VPT, MineCLIP, Uni3D</p>
                 </div>
                 <div style="margin: 15px 0; padding: 15px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 3px;">
                     <strong>Fine-Tuning LLMs for C++ Code Smell Detection</strong> <span style="color: #777;">— MC REU 2025</span>
-                    <p style="margin: 8px 0 0 0; color: #555;">Fine-tuned two DeepSeek-Coder 1.3B models to detect code smells and generate automated fixes for open-source C++ game engine code, using LoRA/QLoRA to cut GPU memory needs.</p>
-                    <p style="margin: 8px 0 0 0; color: #777; font-size: 12px;"><strong>Tech Stack:</strong> Python, DeepSeek-Coder, LoRA/QLoRA</p>
+                    <p style="margin: 8px 0 0 0; color: #555;">Built a pipeline that runs clang-tidy over 10 open-source C++ game engines to create a 34,433-function dataset, then fine-tuned DeepSeek-Coder-1.3B LoRA adapters to detect findings and generate repairs. On two unseen engines it reached 0.766 micro-F1, and 53.9% of its repairs passed static re-analysis (vs. 14.1% untuned).</p>
+                    <p style="margin: 8px 0 0 0; color: #777; font-size: 12px;"><strong>Tech Stack:</strong> Python, DeepSeek-Coder, LoRA, clang-tidy</p>
                     <p style="margin: 8px 0 0 0;"><a href="https://github.com/GraphoLogiCode/C-FineTuneDeepSeek" target="_blank" rel="noopener noreferrer" style="color: #0066CC; text-decoration: none;">🔗 View on GitHub</a></p>
                 </div>
             `,
+            'art': artFolderHtml(),
             'about': `
                 <h2><svg viewBox="0 0 32 32"><use href="#i-about" /></svg> About Me</h2>
                 <hr>
@@ -241,29 +336,31 @@ Type 'help' to see what's here.</div>
         const titleMap = {
             'resume': 'Resume',
             'projects': 'My Projects',
+            'art': 'My Art',
             'about': 'About Me.txt - Notepad',
             'contact': 'Contact',
             'terminal': 'Command Prompt'
         };
 
-        // The resume and terminal windows hold full-bleed app views,
-        // so they open without the usual text padding.
-        const flushWindows = ['resume', 'terminal'];
+        // The resume, art folder, and terminal windows hold full-bleed app
+        // views, so they open without the usual text padding.
+        const flushWindows = ['resume', 'art', 'terminal'];
 
         if (contentMap[key]) {
             wm.openWindow(key, titleMap[key], contentMap[key], flushWindows.includes(key) ? { flush: true } : {});
             if (key === 'resume') renderResumePdf();
+            if (key === 'art') setupArtFolder();
             if (key === 'terminal') setupTerminal();
             noteWindowOpened(key);
         }
     }
 
     // ---- Explorer achievement ----
-    // A visitor who opens all four windows clearly cared enough to look at
+    // A visitor who opens all five windows clearly cared enough to look at
     // everything, so they get a little XP tray balloon as a thank-you —
     // and it unlocks the hidden Command Prompt as a reward. This also gives
     // phone visitors a way in, since they can't type the Konami code.
-    const CORE_WINDOWS = ['resume', 'projects', 'about', 'contact'];
+    const CORE_WINDOWS = ['resume', 'projects', 'art', 'about', 'contact'];
 
     // Progress is saved between visits, so opening two windows today and
     // two tomorrow still counts — a refresh doesn't reset the hunt.
@@ -282,7 +379,7 @@ Type 'help' to see what's here.</div>
         }
         if (openedWindows.size === CORE_WINDOWS.length && !localStorage.getItem('explorerAchieved')) {
             localStorage.setItem('explorerAchieved', '1');
-            // Small pause so the balloon lands after the fourth window opens
+            // Small pause so the balloon lands after the last window opens
             setTimeout(showExplorerBalloon, 700);
         }
     }
@@ -448,6 +545,7 @@ Type 'help' to see what's here.</div>
                     '  about         - quick bio',
                     '  resume        - open the resume window',
                     '  projects      - open the projects window',
+                    '  art           - open the art folder',
                     '  contact       - open the contact window',
                     '  ls / dir      - list files here',
                     '  cat <file>    - view a file',
@@ -461,15 +559,17 @@ Type 'help' to see what's here.</div>
             } else if (lower === 'about --full' || lower === 'about -full') {
                 openAndNote('about', 'About Me');
             } else if (cmd === 'about') {
-                print("CS student at Penn State, minoring in math. Rows, draws, and wants to build a house someday — logically supported and well-designed. Type 'about --full' for the full window.");
+                print("CS student at Penn State, minoring in math and art. Rows, draws, and wants to build a house someday — logically supported and well-designed. Type 'about --full' for the full window.");
             } else if (cmd === 'resume') {
                 openAndNote('resume', 'Resume');
             } else if (cmd === 'projects') {
                 openAndNote('projects', 'My Projects');
+            } else if (cmd === 'art') {
+                openAndNote('art', 'My Art');
             } else if (cmd === 'contact') {
                 openAndNote('contact', 'Contact');
             } else if (cmd === 'ls' || cmd === 'dir') {
-                print(' Directory of C:\\Users\\Benjamin\n\nresume.pdf\nprojects\\\nabout_me.txt\ncontact.txt\nhouse_blueprint.dwg   [in progress]\nsecrets.txt');
+                print(' Directory of C:\\Users\\Benjamin\n\nresume.pdf\nprojects\\\nart\\\nabout_me.txt\ncontact.txt\nhouse_blueprint.dwg   [in progress]\nsecrets.txt');
             } else if (cmd === 'cat') {
                 handleCat(rest);
             } else if (lower === 'sudo make me a sandwich') {
