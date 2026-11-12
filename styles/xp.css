@@ -864,3 +864,27 @@ body {
 .art-viewer-caption span {
     color: #555;
 }
+
+/* ===== MEDIA PLAYER (project demo video) ===== */
+.media-player {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #000;
+}
+
+.media-player video {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    background: #000;
+    object-fit: contain;
+}
+
+.media-status {
+    padding: 4px 10px;
+    background: var(--xp-beige);
+    border-top: 1px solid #888;
+    font-size: 11px;
+    color: #333;
+}
