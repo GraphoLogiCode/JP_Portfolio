@@ -191,6 +191,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'ArrowRight') stepArt(1);
     });
 
+    // ---- Demo video ----
+    // The Probability Lab demo plays in its own little media-player window.
+    // assets/probability-lab/demo.mp4 is a 720p copy of the full-quality video
+    // in the genesis-world repo, so the page stays light.
+    function setupProjects() {
+        const projects = document.getElementById('win-projects');
+        if (projects.dataset.wired) return;
+        projects.dataset.wired = '1';
+        projects.querySelector('#watch-probability-demo').addEventListener('click', openDemoVideo);
+    }
+
+    function openDemoVideo() {
+        wm.openWindow('mediaplayer', 'Media Player - Probability Lab Demo', `
+            <div class="media-player">
+                <video controls playsinline preload="metadata" poster="assets/probability-lab/poster.jpg"
+                    src="assets/probability-lab/demo.mp4"></video>
+                <div class="media-status">Genesis Probability Lab: a coin flip, a die roll, live forecasts, and 1,000 rolls (1:16, with captions)</div>
+            </div>
+        `, { flush: true });
+        const video = document.querySelector('#win-mediaplayer video');
+        if (video) video.play().catch(() => { /* browser wants a tap on the play button */ });
+    }
+
     // Content Loader
     function openContent(key) {
         const contentMap = {
@@ -211,6 +234,15 @@ document.addEventListener('DOMContentLoaded', () => {
             'projects': `
                 <h2><svg viewBox="0 0 32 32"><use href="#i-projects" /></svg> My Projects</h2>
                 <hr>
+                <div style="margin: 15px 0; padding: 15px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 3px;">
+                    <strong>Genesis Probability Lab</strong> <span style="color: #777;">— built on the Genesis World physics simulator</span>
+                    <p style="margin: 8px 0 0 0; color: #555;">Flips a coin or rolls a die inside a physics simulation and shows how the odds of each outcome build up. Nothing picks the result at random: the face on top is read once the body comes to rest, and the only randomness is in the launch state. While a toss is still in the air, the lab forecasts the result by running 64 slightly perturbed futures, and a batch of 1,000 die rolls fills in the observed frequencies with 95% intervals.</p>
+                    <p style="margin: 8px 0 0 0; color: #777; font-size: 12px;"><strong>Tech Stack:</strong> Python, Genesis World, PyTorch (CUDA), SciPy, imgui-bundle</p>
+                    <p style="margin: 8px 0 0 0;">
+                        <button type="button" class="xp-button" id="watch-probability-demo">▶ Watch demo (1:16)</button>
+                        <a href="https://github.com/GraphoLogiCode/genesis-world/tree/main/examples/probability" target="_blank" rel="noopener noreferrer" style="color: #0066CC; text-decoration: none; margin-left: 12px;">🔗 View on GitHub</a>
+                    </p>
+                </div>
                 <div style="margin: 15px 0; padding: 15px; background: #f5f5f5; border: 1px solid #ddd; border-radius: 3px;">
                     <strong>PathFinder</strong> <span style="color: #777;">— Yale Hackathon 2026</span>
                     <p style="margin: 8px 0 0 0; color: #555;">A satellite-image disaster-response tool built in a two-person team. I engineered the AI/ML and backend: YOLO damage detection, a FastAPI routing engine, and a geo-referencing pipeline.</p>
@@ -349,6 +381,7 @@ Type 'help' to see what's here.</div>
             wm.openWindow(key, titleMap[key], contentMap[key], flushWindows.includes(key) ? { flush: true } : {});
             if (key === 'resume') renderResumePdf();
             if (key === 'art') setupArtFolder();
+            if (key === 'projects') setupProjects();
             if (key === 'terminal') setupTerminal();
             noteWindowOpened(key);
         }
