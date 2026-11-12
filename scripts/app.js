@@ -102,7 +102,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // One entry per piece, shown in this order. To add artwork: put a
     // full-size image in assets/art/ and a small copy with the same name in
     // assets/art/thumbs/, then add a line here.
+    // Videos work too: set `video` to the .mp4 in assets/art/, `file` to a
+    // poster frame for it, and `thumb` to the name of its thumbnail.
+    const ART111 = 'ART 111, Penn State, Fall 2026';
     const ART_PIECES = [
+        { video: 'q-seum.mp4', file: 'q-seum-video-poster.jpg', thumb: 'q-seum-video.jpg', title: 'Q-Seum (video)', detail: `Group installation with Brayden & Anthony · ${ART111}` },
+        { file: 'q-seum-poster.jpg', title: 'Q-Seum', detail: `Group installation with Brayden & Anthony · ${ART111}` },
+        { video: 'social-media-work.mp4', file: 'social-media-work-video-poster.jpg', thumb: 'social-media-work-video.jpg', title: 'Social Media Work (video)', detail: ART111 },
+        { file: 'woodworking-part1-1.jpg', title: 'Woodworking, Part 1 (front)', detail: `Carved wood, wall piece · ${ART111}` },
+        { file: 'woodworking-part1-2.jpg', title: 'Woodworking, Part 1 (left)', detail: `Carved wood, wall piece · ${ART111}` },
+        { file: 'woodworking-part1-3.jpg', title: 'Woodworking, Part 1 (right)', detail: `Carved wood, wall piece · ${ART111}` },
+        { file: 'woodworking-part2.jpg', title: 'Woodworking, Part 2', detail: `Wood · ${ART111}` },
+        { file: 'woodworking-sketches.jpg', title: 'Woodworking: Sketches', detail: `Brainstorming sketches and outline · ${ART111}` },
+        { file: 'woodworking-template.jpg', title: 'Woodworking: Cut Plan', detail: `Pattern for the cardboard prototype of Part 1 · ${ART111}` },
+        { file: 'remembrance-bicycle-1.jpg', title: 'Objects of Remembrance (1)', detail: `Wire sculpture · ${ART111}` },
+        { file: 'remembrance-bicycle-2.jpg', title: 'Objects of Remembrance (2)', detail: `Wire sculpture · ${ART111}` },
+        { file: 'remembrance-bicycle-3.jpg', title: 'Objects of Remembrance (3)', detail: `Wire sculpture · ${ART111}` },
         { file: 'mirror-figure-front.jpg', title: 'Mirror Figure (front)', detail: 'Sculpture, mixed media' },
         { file: 'mirror-figure-side.jpg', title: 'Mirror Figure (side)', detail: 'Sculpture, mixed media' },
         { file: 'strap-figure.jpg', title: 'Untitled Figure', detail: 'Sculpture' },
@@ -114,8 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Explorer-style "Thumbnails" view of the art folder
     function artFolderHtml() {
         const thumbs = ART_PIECES.map((piece, i) => `
-            <button class="art-thumb" data-index="${i}" title="${piece.title}">
-                <span class="art-thumb-frame"><img src="assets/art/thumbs/${piece.file}" alt="${piece.title}" loading="lazy"></span>
+            <button class="art-thumb${piece.video ? ' is-video' : ''}" data-index="${i}" title="${piece.title}">
+                <span class="art-thumb-frame"><img src="assets/art/thumbs/${piece.thumb || piece.file}" alt="${piece.title}" loading="lazy"></span>
                 <span class="art-thumb-label">${piece.title}</span>
             </button>
         `).join('');
@@ -126,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span>C:\\Users\\Benjamin\\My Art</span>
                 </div>
                 <div class="art-grid">${thumbs}</div>
-                <div class="art-status">${ART_PIECES.length} objects — click a picture to view it</div>
+                <div class="art-status">${ART_PIECES.length} objects — click a picture or video to open it</div>
             </div>
         `;
     }
@@ -147,7 +162,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function openArtViewer(index) {
         wm.openWindow('artviewer', 'Picture Viewer', `
             <div class="art-viewer">
-                <div class="art-viewer-stage"><img id="art-viewer-img" alt=""></div>
+                <div class="art-viewer-stage">
+                    <img id="art-viewer-img" alt="">
+                    <video id="art-viewer-video" controls playsinline preload="metadata" hidden></video>
+                </div>
                 <div class="art-viewer-bar">
                     <button class="xp-button" id="art-prev" aria-label="Previous picture">◀ Back</button>
                     <div class="art-viewer-caption">
@@ -172,8 +190,25 @@ document.addEventListener('DOMContentLoaded', () => {
         artIndex = (index + ART_PIECES.length) % ART_PIECES.length;
         const piece = ART_PIECES[artIndex];
         const img = document.getElementById('art-viewer-img');
-        img.src = `assets/art/${piece.file}`;
-        img.alt = piece.title;
+        const video = document.getElementById('art-viewer-video');
+        // Stop any video that was playing before switching pieces
+        video.pause();
+        if (piece.video) {
+            img.hidden = true;
+            img.removeAttribute('src');
+            video.hidden = false;
+            video.poster = `assets/art/${piece.file}`;
+            video.src = `assets/art/${piece.video}`;
+            video.setAttribute('aria-label', piece.title);
+            video.play().catch(() => { /* browser wants a tap on the play button */ });
+        } else {
+            video.hidden = true;
+            video.removeAttribute('src');
+            video.load();
+            img.hidden = false;
+            img.src = `assets/art/${piece.file}`;
+            img.alt = piece.title;
+        }
         document.getElementById('art-viewer-title').textContent = piece.title;
         document.getElementById('art-viewer-detail').textContent =
             `${piece.detail} · ${artIndex + 1} of ${ART_PIECES.length}`;

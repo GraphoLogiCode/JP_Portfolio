@@ -797,6 +797,29 @@ body {
     box-shadow: 1px 1px 0 #DDD;
 }
 
+/* Videos get a small play badge on their thumbnail */
+.art-thumb.is-video .art-thumb-frame {
+    position: relative;
+}
+
+.art-thumb.is-video .art-thumb-frame::after {
+    content: "▶";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid #FFF;
+    color: #FFF;
+    font-size: 12px;
+    line-height: 26px;
+    text-align: center;
+    text-indent: 2px;
+}
+
 .art-thumb-frame img {
     max-width: 112px;
     max-height: 112px;
@@ -834,7 +857,16 @@ body {
     background: #F4F4F4;
 }
 
-.art-viewer-stage img {
+.art-viewer-stage video {
+    background: #000;
+}
+
+.art-viewer-stage [hidden] {
+    display: none;
+}
+
+.art-viewer-stage img,
+.art-viewer-stage video {
     position: absolute;
     inset: 12px;
     width: calc(100% - 24px);
