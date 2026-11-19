@@ -959,7 +959,7 @@ body {
     display: none;
 }
 
-/* ===== MUSIC (Apple Music-style mini player) ===== */
+/* ===== MUSIC (tray button + retro iTunes mini player) ===== */
 #music-button {
     display: flex;
     align-items: center;
@@ -1017,167 +1017,257 @@ body {
     #music-button .eq-bars i { animation: none; transform: scaleY(0.7); }
 }
 
+
+/* Retro iTunes mini player (the 2008 Aqua look): gray metal frame,
+   traffic lights, glossy round buttons and a pale LCD screen */
 #music-player {
     position: fixed;
     right: 8px;
     bottom: 38px;
     z-index: 100000;
-    width: min(300px, calc(100vw - 16px));
-    padding: 14px 16px 12px;
-    border-radius: 14px;
-    background: rgba(246, 246, 250, 0.78);
-    -webkit-backdrop-filter: blur(30px) saturate(180%);
-    backdrop-filter: blur(30px) saturate(180%);
-    border: 0.5px solid rgba(255, 255, 255, 0.6);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28), 0 0 0 0.5px rgba(0, 0, 0, 0.12);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
-    color: #1D1D1F;
+    width: min(480px, calc(100vw - 16px));
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px 10px 10px;
+    border-radius: 7px;
+    background: linear-gradient(to bottom, #D9D9D9 0%, #C2C2C2 45%, #ABABAB 100%);
+    border: 1px solid #7E7E7E;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 10px 28px rgba(0, 0, 0, 0.45);
+    font-family: "Lucida Grande", "Lucida Sans Unicode", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #222;
     user-select: none;
-    animation: mp-pop 0.18s ease-out;
+    animation: mp-pop 0.16s ease-out;
 }
 
 @keyframes mp-pop {
-    from { opacity: 0; transform: translateY(6px) scale(0.98); }
+    from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: none; }
 }
 
-.mp-header {
+/* Traffic lights */
+.mp-lights {
     display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-/* Artwork: a soft fairy-fountain gradient with a sparkle */
-.mp-artwork {
+    flex-direction: column;
+    gap: 6px;
     flex: 0 0 auto;
-    width: 56px;
-    height: 56px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background:
-        radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.7), transparent 40%),
-        linear-gradient(140deg, #F7A8D8 0%, #B79CF5 45%, #6FD3E6 100%);
-    box-shadow: 0 4px 12px rgba(120, 80, 180, 0.35);
-    color: #FFF;
-    font-size: 24px;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
 }
 
-.mp-meta {
-    min-width: 0;
-}
-
-.mp-title {
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.mp-artist {
-    margin-top: 2px;
-    font-size: 12px;
-    color: #FA2D48; /* Apple Music red */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Thin Apple-style sliders: the track fills up to the thumb via --fill */
-#music-player input[type="range"] {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 4px;
-    margin: 0;
-    border-radius: 2px;
-    background: linear-gradient(to right, #6E6E73 0 var(--fill, 0%), rgba(0, 0, 0, 0.14) var(--fill, 0%) 100%);
-    cursor: pointer;
-    outline: none;
-}
-
-#music-player input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #FFF;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
-    opacity: 0;
-    transition: opacity 0.15s;
-}
-
-#music-player input[type="range"]::-moz-range-thumb {
-    width: 12px;
-    height: 12px;
-    border: none;
-    border-radius: 50%;
-    background: #FFF;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
-    opacity: 0;
-}
-
-#music-player input[type="range"]:hover::-webkit-slider-thumb,
-#music-player input[type="range"]:focus-visible::-webkit-slider-thumb { opacity: 1; }
-#music-player input[type="range"]:hover::-moz-range-thumb { opacity: 1; }
-
-.mp-progress {
-    margin-top: 14px;
-}
-
-.mp-times {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 5px;
-    font-size: 10.5px;
-    color: #86868B;
-    font-variant-numeric: tabular-nums;
-}
-
-.mp-controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 26px;
-    margin: 6px 0 10px;
-}
-
-.mp-controls button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.mp-light {
+    display: block;
+    width: 14px;
+    height: 14px;
     padding: 0;
-    background: none;
-    border: none;
-    color: #1D1D1F;
-    cursor: pointer;
     border-radius: 50%;
-    transition: transform 0.1s, opacity 0.15s;
+    border: 1px solid rgba(0, 0, 0, 0.45);
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.8), inset 0 -2px 3px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
 }
 
-.mp-controls button:active { transform: scale(0.9); }
-.mp-controls button:focus-visible { outline: 2px solid #0071E3; outline-offset: 2px; }
+.mp-red { background: radial-gradient(circle at 50% 30%, #FFB3B3 0%, #E8352E 55%, #A31612 100%); }
+.mp-yellow { background: radial-gradient(circle at 50% 30%, #FFE7A8 0%, #F0A21C 55%, #B06A08 100%); }
+.mp-green { background: radial-gradient(circle at 50% 30%, #C9F2B4 0%, #4DB53B 55%, #23701B 100%); cursor: default; }
 
-.mp-skip svg { width: 24px; height: 24px; }
-.mp-play svg { width: 34px; height: 34px; }
+/* Transport buttons and volume */
+.mp-deck {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+}
 
-.mp-play .mp-icon-pause { display: none; }
-.mp-play.is-playing .mp-icon-play { display: none; }
-.mp-play.is-playing .mp-icon-pause { display: block; }
+.mp-transport {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.mp-round {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid #6F6F6F;
+    background: linear-gradient(to bottom, #FFFFFF 0%, #F0F0F0 48%, #D6D6D6 52%, #EDEDED 100%);
+    box-shadow: 0 1px 1px rgba(255, 255, 255, 0.7), inset 0 -1px 2px rgba(0, 0, 0, 0.15);
+    color: #4A4A4A;
+    cursor: pointer;
+}
+
+.mp-round svg { width: 15px; height: 15px; }
+
+.mp-big {
+    width: 44px;
+    height: 44px;
+}
+
+.mp-big svg { width: 22px; height: 22px; }
+
+.mp-round:active {
+    background: linear-gradient(to bottom, #C9C9C9 0%, #DADADA 100%);
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.3);
+}
+
+.mp-round:focus-visible,
+.mp-light:focus-visible,
+.mp-lcd-btn:focus-visible {
+    outline: 2px solid #3B82F6;
+    outline-offset: 1px;
+}
+
+.mp-big .mp-icon-pause { display: none; }
+.mp-big.is-playing .mp-icon-play { display: none; }
+.mp-big.is-playing .mp-icon-pause { display: block; }
 
 .mp-volume {
     display: flex;
     align-items: center;
-    gap: 8px;
-    color: #86868B;
+    gap: 3px;
+    color: #555;
 }
 
-.mp-volume svg {
+.mp-volume svg { width: 14px; height: 14px; flex: 0 0 auto; }
+
+/* Volume slider: dark groove with a glossy round knob */
+#mp-volume {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 82px;
+    height: 5px;
+    margin: 0;
+    border-radius: 3px;
+    background: linear-gradient(to bottom, #5E5E5E, #8A8A8A);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+}
+
+#mp-volume::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid #6F6F6F;
+    background: radial-gradient(circle at 50% 30%, #FFFFFF 0%, #E4E4E4 55%, #B5B5B5 100%);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+#mp-volume::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid #6F6F6F;
+    background: radial-gradient(circle at 50% 30%, #FFFFFF 0%, #E4E4E4 55%, #B5B5B5 100%);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* The LCD screen */
+.mp-lcd {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: 5px;
+    border: 1px solid #8D8D80;
+    background: linear-gradient(to bottom, #F2F4DE 0%, #E6E9CC 50%, #DADEBC 100%);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.mp-lcd-text {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+}
+
+.mp-title {
+    font-size: 13px;
+    font-weight: bold;
+    color: #3A3A32;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.mp-artist {
+    font-size: 12px;
+    color: #3A3A32;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.mp-lcd-btn {
     flex: 0 0 auto;
-    width: 15px;
-    height: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: #5D5D52;
+    color: #E9ECD3;
+    cursor: pointer;
+}
+
+.mp-lcd-btn svg { width: 14px; height: 14px; }
+.mp-lcd-btn:hover { background: #45453C; }
+#mp-repeat:not(.is-on) { background: #A9AC94; }
+
+.mp-progress {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+    font-size: 11.5px;
+    color: #3A3A32;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Track: dark inset pill with a white diamond playhead. The real range
+   input sits invisibly on top so dragging and keyboard still work. */
+.mp-track {
+    position: relative;
+    flex: 1;
+    height: 10px;
+    border-radius: 5px;
+    background: linear-gradient(to bottom, #6E6F62, #8F907F);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.mp-diamond {
+    position: absolute;
+    top: 50%;
+    left: clamp(5px, var(--fill, 0%), calc(100% - 5px));
+    width: 8px;
+    height: 8px;
+    background: #FFF;
+    border: 1px solid #55564A;
+    transform: translate(-50%, -50%) rotate(45deg);
+    pointer-events: none;
+}
+
+#mp-seek {
+    position: absolute;
+    inset: -4px 0;
+    width: 100%;
+    height: calc(100% + 8px);
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.mp-track:focus-within .mp-diamond {
+    box-shadow: 0 0 0 2px #3B82F6;
+}
+
+/* Phones: drop the volume row and side buttons so the screen keeps room */
+@media (max-width: 430px) {
+    .mp-volume, .mp-lcd-btn { display: none; }
+    .mp-round { width: 28px; height: 28px; }
+    .mp-big { width: 38px; height: 38px; }
 }

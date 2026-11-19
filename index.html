@@ -188,49 +188,60 @@
         </div>
     </div>
 
-    <!-- Apple Music-style mini player that pops up above the system tray -->
+    <!-- Retro iTunes-style mini player that pops up above the system tray -->
     <div id="music-player" class="hidden" role="dialog" aria-label="Music player">
-        <div class="mp-header">
-            <div class="mp-artwork" aria-hidden="true"><span>✦</span></div>
-            <div class="mp-meta">
-                <div class="mp-title">Great Fairy Fountain (Slowed)</div>
-                <div class="mp-artist">Koji Kondo — The Legend of Zelda</div>
+        <div class="mp-lights">
+            <button type="button" id="mp-close" class="mp-light mp-red" aria-label="Close player" title="Close"></button>
+            <button type="button" id="mp-min" class="mp-light mp-yellow" aria-label="Hide player" title="Hide"></button>
+            <span class="mp-light mp-green" aria-hidden="true"></span>
+        </div>
+        <div class="mp-deck">
+            <div class="mp-transport">
+                <button type="button" id="mp-back" class="mp-round" aria-label="Back 15 seconds" title="Back 15 seconds">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 6.5v11L3.5 12zM20.5 6.5v11L13 12z" fill="currentColor" /></svg>
+                </button>
+                <button type="button" id="mp-play" class="mp-round mp-big" aria-label="Play">
+                    <svg class="mp-icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor" /></svg>
+                    <svg class="mp-icon-pause" viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="6.5" y="5.5" width="4" height="13" rx="0.8" fill="currentColor" />
+                        <rect x="13.5" y="5.5" width="4" height="13" rx="0.8" fill="currentColor" />
+                    </svg>
+                </button>
+                <button type="button" id="mp-forward" class="mp-round" aria-label="Forward 15 seconds" title="Forward 15 seconds">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 6.5v11L20.5 12zM3.5 6.5v11L11 12z" fill="currentColor" /></svg>
+                </button>
+            </div>
+            <div class="mp-volume">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3l4-3.5v12l-4-3.5H4z" fill="currentColor" /></svg>
+                <input id="mp-volume" type="range" min="0" max="100" value="35" aria-label="Volume">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 9.5h3l4-3.5v12l-4-3.5H3z" fill="currentColor" />
+                    <path d="M13 9.5a3.5 3.5 0 0 1 0 5M15.5 7.5a6.5 6.5 0 0 1 0 9M18 5.5a9.5 9.5 0 0 1 0 13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+                </svg>
             </div>
         </div>
-        <div class="mp-progress">
-            <input id="mp-seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek">
-            <div class="mp-times"><span id="mp-elapsed">0:00</span><span id="mp-remaining">-0:00</span></div>
-        </div>
-        <div class="mp-controls">
-            <button type="button" id="mp-back" class="mp-skip" aria-label="Back 15 seconds" title="Back 15 seconds">
+        <div class="mp-lcd">
+            <button type="button" id="mp-restart" class="mp-lcd-btn" aria-label="Restart song" title="Restart song">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 7.5v9l7-4.5z" fill="currentColor" /></svg>
+            </button>
+            <div class="mp-lcd-text">
+                <div class="mp-title">Great Fairy Fountain (Slowed)</div>
+                <div class="mp-artist">Koji Kondo — The Legend of Zelda</div>
+                <div class="mp-progress">
+                    <span id="mp-elapsed">0:00</span>
+                    <div class="mp-track">
+                        <span class="mp-diamond" aria-hidden="true"></span>
+                        <input id="mp-seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek">
+                    </div>
+                    <span id="mp-remaining">-0:00</span>
+                </div>
+            </div>
+            <button type="button" id="mp-repeat" class="mp-lcd-btn is-on" aria-label="Repeat" aria-pressed="true" title="Repeat: on">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 5V2L7.5 5.5 12 9V6.5a6.5 6.5 0 1 1-6.5 6.5H4a8 8 0 1 0 8-8z" fill="currentColor" />
-                    <text x="12" y="16.2" text-anchor="middle" font-size="6.5" font-weight="700" fill="currentColor">15</text>
+                    <path d="M12 6.5a5.5 5.5 0 1 1-5.2 3.7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
+                    <path d="M12 2.5v8L7.5 6.5z" fill="currentColor" />
                 </svg>
             </button>
-            <button type="button" id="mp-play" class="mp-play" aria-label="Play">
-                <svg class="mp-icon-play" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M8 5.6v12.8c0 .8.9 1.3 1.6.9l10-6.4a1 1 0 0 0 0-1.8l-10-6.4C8.9 4.3 8 4.8 8 5.6z" fill="currentColor" />
-                </svg>
-                <svg class="mp-icon-pause" viewBox="0 0 24 24" aria-hidden="true">
-                    <rect x="6" y="4.5" width="4" height="15" rx="1.2" fill="currentColor" />
-                    <rect x="14" y="4.5" width="4" height="15" rx="1.2" fill="currentColor" />
-                </svg>
-            </button>
-            <button type="button" id="mp-forward" class="mp-skip" aria-label="Forward 15 seconds" title="Forward 15 seconds">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 5V2l4.5 3.5L12 9V6.5a6.5 6.5 0 1 0 6.5 6.5H20a8 8 0 1 1-8-8z" fill="currentColor" />
-                    <text x="12" y="16.2" text-anchor="middle" font-size="6.5" font-weight="700" fill="currentColor">15</text>
-                </svg>
-            </button>
-        </div>
-        <div class="mp-volume">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h3l4-3.5v13L7 15H4z" fill="currentColor" /></svg>
-            <input id="mp-volume" type="range" min="0" max="100" value="35" aria-label="Volume">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M4 9h3l4-3.5v13L7 15H4z" fill="currentColor" />
-                <path d="M14.5 9a4 4 0 0 1 0 6M17 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-            </svg>
         </div>
     </div>
 

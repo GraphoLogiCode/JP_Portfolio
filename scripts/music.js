@@ -1,4 +1,4 @@
-// Background music: an Apple Music-style mini player that pops up above
+// Background music: a retro iTunes-style mini player that pops up above
 // the system tray. Nothing plays until the visitor presses play (browsers
 // block sound before a click anyway), and the song only downloads once
 // someone opens the player, so the page stays light for everyone else.
@@ -11,6 +11,9 @@ class MusicPlayer {
         this.volume = document.getElementById('mp-volume');
         this.elapsed = document.getElementById('mp-elapsed');
         this.remaining = document.getElementById('mp-remaining');
+
+        this.track = this.seek.parentElement;
+        this.repeatBtn = document.getElementById('mp-repeat');
 
         this.audio = new Audio();
         this.audio.loop = true;
@@ -27,6 +30,11 @@ class MusicPlayer {
         this.volume.value = saved;
         this.audio.volume = saved / 100;
 
+        // Repeat is on unless the visitor turned it off
+        try {
+            if (localStorage.getItem('musicRepeat') === '0') this.setRepeat(false);
+        } catch (e) { /* storage blocked: keep repeat on */ }
+
         this.bindEvents();
     }
 
@@ -39,6 +47,13 @@ class MusicPlayer {
         this.playBtn.addEventListener('click', () => this.togglePlay());
         document.getElementById('mp-back').addEventListener('click', () => this.skip(-15));
         document.getElementById('mp-forward').addEventListener('click', () => this.skip(15));
+        document.getElementById('mp-close').addEventListener('click', () => this.closePanel());
+        document.getElementById('mp-min').addEventListener('click', () => this.closePanel());
+        document.getElementById('mp-restart').addEventListener('click', () => this.restart());
+        this.repeatBtn.addEventListener('click', () => {
+            this.setRepeat(!this.audio.loop);
+            try { localStorage.setItem('musicRepeat', this.audio.loop ? '1' : '0'); } catch (e) { /* ignore */ }
+        });
 
         // Dragging the progress bar previews the time, letting go jumps there
         this.seek.addEventListener('input', () => {
@@ -52,7 +67,6 @@ class MusicPlayer {
 
         this.volume.addEventListener('input', () => {
             this.audio.volume = this.volume.value / 100;
-            this.paintRange(this.volume, this.volume.value / 100);
             try { localStorage.setItem('musicVolume', this.volume.value); } catch (e) { /* ignore */ }
         });
 
@@ -60,6 +74,8 @@ class MusicPlayer {
         this.audio.addEventListener('loadedmetadata', () => this.updateProgress());
         this.audio.addEventListener('play', () => this.updatePlayState());
         this.audio.addEventListener('pause', () => this.updatePlayState());
+        // With repeat off the song stops at the end and rewinds to the start
+        this.audio.addEventListener('ended', () => { this.audio.currentTime = 0; this.updateProgress(); });
 
         // Clicking anywhere else, or pressing Escape, closes the player
         document.addEventListener('click', (e) => {
@@ -69,7 +85,6 @@ class MusicPlayer {
             if (e.key === 'Escape') this.closePanel();
         });
 
-        this.paintRange(this.volume, this.volume.value / 100);
     }
 
     // Load the song the first time it is actually needed
@@ -114,6 +129,19 @@ class MusicPlayer {
         this.audio.pause();
     }
 
+    restart() {
+        this.ensureLoaded();
+        this.audio.currentTime = 0;
+        if (this.audio.paused) this.togglePlay();
+    }
+
+    setRepeat(on) {
+        this.audio.loop = on;
+        this.repeatBtn.classList.toggle('is-on', on);
+        this.repeatBtn.setAttribute('aria-pressed', String(on));
+        this.repeatBtn.title = on ? 'Repeat: on' : 'Repeat: off';
+    }
+
     skip(seconds) {
         if (!this.audio.duration) return;
         this.audio.currentTime = Math.max(0, Math.min(this.audio.duration - 0.5, this.audio.currentTime + seconds));
@@ -137,12 +165,8 @@ class MusicPlayer {
         const d = this.audio.duration || 0;
         this.elapsed.textContent = this.format(t);
         this.remaining.textContent = '-' + this.format(Math.max(0, d - t));
-        this.paintRange(this.seek, d ? t / d : 0);
-    }
-
-    // Fills the slider track up to the thumb, the way Apple's sliders look
-    paintRange(input, fraction) {
-        input.style.setProperty('--fill', `${Math.round(fraction * 1000) / 10}%`);
+        // Moves the diamond playhead along the track
+        this.track.style.setProperty('--fill', `${d ? Math.round(t / d * 1000) / 10 : 0}%`);
     }
 
     format(seconds) {
