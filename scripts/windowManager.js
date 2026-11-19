@@ -125,7 +125,77 @@ class WindowManager {
             }
         });
 
+        this.addResizeHandles(win, id);
+
         return win;
+    }
+
+    // --- Resizing ---
+    // Invisible strips on every edge and corner let a window be dragged
+    // bigger or smaller, like real XP. Pointer events cover mouse and touch.
+    addResizeHandles(win, id) {
+        ['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw'].forEach(dir => {
+            const handle = document.createElement('div');
+            handle.className = `resize-handle resize-${dir}`;
+            handle.addEventListener('pointerdown', (e) => this.startResize(e, win, id, dir));
+            win.appendChild(handle);
+        });
+    }
+
+    startResize(e, win, id, dir) {
+        const winObj = this.windows.find(w => w.id === id);
+        if (!winObj || winObj.maximized) return; // A maximized window is already full size
+
+        e.preventDefault();
+        e.stopPropagation();
+        this.focusWindow(id);
+
+        const handle = e.currentTarget;
+        handle.setPointerCapture(e.pointerId);
+
+        const start = win.getBoundingClientRect();
+        const desk = this.desktop.getBoundingClientRect();
+        const minW = 250;
+        const minH = 180;
+
+        const onMove = (ev) => {
+            const dx = ev.clientX - e.clientX;
+            const dy = ev.clientY - e.clientY;
+            let left = start.left;
+            let top = start.top;
+            let width = start.width;
+            let height = start.height;
+
+            if (dir.includes('e')) {
+                width = Math.min(Math.max(minW, start.width + dx), desk.right - start.left);
+            }
+            if (dir.includes('s')) {
+                height = Math.min(Math.max(minH, start.height + dy), desk.bottom - start.top);
+            }
+            if (dir.includes('w')) {
+                left = Math.max(desk.left, Math.min(start.left + dx, start.right - minW));
+                width = start.right - left;
+            }
+            if (dir.includes('n')) {
+                top = Math.max(desk.top, Math.min(start.top + dy, start.bottom - minH));
+                height = start.bottom - top;
+            }
+
+            win.style.left = `${left - desk.left}px`;
+            win.style.top = `${top - desk.top}px`;
+            win.style.width = `${width}px`;
+            win.style.height = `${height}px`;
+        };
+
+        const onUp = () => {
+            handle.removeEventListener('pointermove', onMove);
+            handle.removeEventListener('pointerup', onUp);
+            handle.removeEventListener('pointercancel', onUp);
+        };
+
+        handle.addEventListener('pointermove', onMove);
+        handle.addEventListener('pointerup', onUp);
+        handle.addEventListener('pointercancel', onUp);
     }
 
     createTaskbarItem(id, title) {
@@ -217,6 +287,7 @@ class WindowManager {
             win.style.width = winObj.prevPosition.width;
             win.style.height = winObj.prevPosition.height;
             winObj.maximized = false;
+            win.classList.remove('maximized');
         } else {
             // Maximize. An empty width/height here is fine: restoring an
             // empty value hands sizing back to the stylesheet default.
@@ -233,6 +304,7 @@ class WindowManager {
             // so 100% fills everything without covering it
             win.style.height = '100%';
             winObj.maximized = true;
+            win.classList.add('maximized');
         }
 
         if (typeof soundManager !== 'undefined') soundManager.play('click');
