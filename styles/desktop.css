@@ -73,6 +73,11 @@ body {
         left: 2.5vw !important;
     }
 
+    /* Phone windows are fixed to the screen width, so only height can change */
+    .resize-e, .resize-w {
+        display: none;
+    }
+
     #start-menu {
         width: 100%;
     }
