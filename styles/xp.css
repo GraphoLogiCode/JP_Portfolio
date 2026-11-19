@@ -23,8 +23,9 @@ body {
     overflow: hidden;
     height: 100vh;
     width: 100vw;
-    /* Classic Windows XP Bliss-style gradient fallback */
-    background: linear-gradient(180deg, #3A6EA5 0%, #6B9BC4 50%, #8CC63F 100%);
+    /* Desktop wallpaper, with the Bliss-style gradient underneath while it loads */
+    background: url('../assets/wallpaper.jpg') 58% center / cover no-repeat,
+        linear-gradient(180deg, #3A6EA5 0%, #6B9BC4 50%, #8CC63F 100%);
     background-color: #3B6EA5;
 }
 
