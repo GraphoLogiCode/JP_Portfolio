@@ -29,6 +29,15 @@ body {
     background-color: #3B6EA5;
 }
 
+/* Big or high-density screens (4K monitors, Retina laptops) get the
+   full 3840x2160 wallpaper; phones and ordinary screens keep the light one */
+@media (min-width: 2001px), (min-resolution: 1.5dppx) and (min-width: 1100px) {
+    body {
+        background-image: url('../assets/wallpaper-4k.jpg'),
+            linear-gradient(180deg, #3A6EA5 0%, #6B9BC4 50%, #8CC63F 100%);
+    }
+}
+
 /* ===== DESKTOP ICONS ===== */
 #desktop {
     position: absolute;
