@@ -958,3 +958,226 @@ body {
 .window.maximized .resize-handle {
     display: none;
 }
+
+/* ===== MUSIC (Apple Music-style mini player) ===== */
+#music-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: 4px;
+    color: #FFF;
+    cursor: pointer;
+}
+
+#music-button:hover,
+#music-button[aria-expanded="true"] {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+#music-button .music-note {
+    width: 15px;
+    height: 15px;
+}
+
+/* While a song plays, the note turns into Apple's bouncing "now playing" bars */
+#music-button .eq-bars {
+    display: none;
+    align-items: flex-end;
+    gap: 2px;
+    height: 12px;
+}
+
+#music-button.is-playing .music-note { display: none; }
+#music-button.is-playing .eq-bars { display: flex; }
+
+#music-button .eq-bars i {
+    display: block;
+    width: 3px;
+    height: 100%;
+    background: #FFF;
+    border-radius: 1px;
+    transform-origin: bottom;
+    animation: eq-bounce 0.9s ease-in-out infinite;
+}
+
+#music-button .eq-bars i:nth-child(2) { animation-delay: -0.3s; }
+#music-button .eq-bars i:nth-child(3) { animation-delay: -0.6s; }
+
+@keyframes eq-bounce {
+    0%, 100% { transform: scaleY(0.3); }
+    50% { transform: scaleY(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #music-button .eq-bars i { animation: none; transform: scaleY(0.7); }
+}
+
+#music-player {
+    position: fixed;
+    right: 8px;
+    bottom: 38px;
+    z-index: 100000;
+    width: min(300px, calc(100vw - 16px));
+    padding: 14px 16px 12px;
+    border-radius: 14px;
+    background: rgba(246, 246, 250, 0.78);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    backdrop-filter: blur(30px) saturate(180%);
+    border: 0.5px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28), 0 0 0 0.5px rgba(0, 0, 0, 0.12);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+    color: #1D1D1F;
+    user-select: none;
+    animation: mp-pop 0.18s ease-out;
+}
+
+@keyframes mp-pop {
+    from { opacity: 0; transform: translateY(6px) scale(0.98); }
+    to { opacity: 1; transform: none; }
+}
+
+.mp-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Artwork: a soft fairy-fountain gradient with a sparkle */
+.mp-artwork {
+    flex: 0 0 auto;
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.7), transparent 40%),
+        linear-gradient(140deg, #F7A8D8 0%, #B79CF5 45%, #6FD3E6 100%);
+    box-shadow: 0 4px 12px rgba(120, 80, 180, 0.35);
+    color: #FFF;
+    font-size: 24px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
+}
+
+.mp-meta {
+    min-width: 0;
+}
+
+.mp-title {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mp-artist {
+    margin-top: 2px;
+    font-size: 12px;
+    color: #FA2D48; /* Apple Music red */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Thin Apple-style sliders: the track fills up to the thumb via --fill */
+#music-player input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    margin: 0;
+    border-radius: 2px;
+    background: linear-gradient(to right, #6E6E73 0 var(--fill, 0%), rgba(0, 0, 0, 0.14) var(--fill, 0%) 100%);
+    cursor: pointer;
+    outline: none;
+}
+
+#music-player input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #FFF;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+#music-player input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border: none;
+    border-radius: 50%;
+    background: #FFF;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    opacity: 0;
+}
+
+#music-player input[type="range"]:hover::-webkit-slider-thumb,
+#music-player input[type="range"]:focus-visible::-webkit-slider-thumb { opacity: 1; }
+#music-player input[type="range"]:hover::-moz-range-thumb { opacity: 1; }
+
+.mp-progress {
+    margin-top: 14px;
+}
+
+.mp-times {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font-size: 10.5px;
+    color: #86868B;
+    font-variant-numeric: tabular-nums;
+}
+
+.mp-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 26px;
+    margin: 6px 0 10px;
+}
+
+.mp-controls button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: none;
+    border: none;
+    color: #1D1D1F;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: transform 0.1s, opacity 0.15s;
+}
+
+.mp-controls button:active { transform: scale(0.9); }
+.mp-controls button:focus-visible { outline: 2px solid #0071E3; outline-offset: 2px; }
+
+.mp-skip svg { width: 24px; height: 24px; }
+.mp-play svg { width: 34px; height: 34px; }
+
+.mp-play .mp-icon-pause { display: none; }
+.mp-play.is-playing .mp-icon-play { display: none; }
+.mp-play.is-playing .mp-icon-pause { display: block; }
+
+.mp-volume {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #86868B;
+}
+
+.mp-volume svg {
+    flex: 0 0 auto;
+    width: 15px;
+    height: 15px;
+}

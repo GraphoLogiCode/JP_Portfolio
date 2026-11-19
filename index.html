@@ -173,10 +173,64 @@
             <!-- Active windows -->
         </div>
         <div id="system-tray">
+            <!-- Music: a note while idle, bouncing "now playing" bars while a song plays -->
+            <button id="music-button" type="button" title="Music" aria-label="Open music player"
+                aria-haspopup="dialog" aria-expanded="false">
+                <svg class="music-note" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M19 3v12.2a3 3 0 1 1-2-2.83V7.4l-8 1.8v8a3 3 0 1 1-2-2.83V5.6z" fill="currentColor" />
+                </svg>
+                <span class="eq-bars" aria-hidden="true"><i></i><i></i><i></i></span>
+            </button>
             <svg id="volume-icon" viewBox="0 0 32 32" role="button" tabindex="0" title="Sound On">
                 <use id="volume-icon-use" href="#i-speaker" />
             </svg>
             <div id="clock">12:00 PM</div>
+        </div>
+    </div>
+
+    <!-- Apple Music-style mini player that pops up above the system tray -->
+    <div id="music-player" class="hidden" role="dialog" aria-label="Music player">
+        <div class="mp-header">
+            <div class="mp-artwork" aria-hidden="true"><span>✦</span></div>
+            <div class="mp-meta">
+                <div class="mp-title">Great Fairy Fountain (Slowed)</div>
+                <div class="mp-artist">Koji Kondo — The Legend of Zelda</div>
+            </div>
+        </div>
+        <div class="mp-progress">
+            <input id="mp-seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek">
+            <div class="mp-times"><span id="mp-elapsed">0:00</span><span id="mp-remaining">-0:00</span></div>
+        </div>
+        <div class="mp-controls">
+            <button type="button" id="mp-back" class="mp-skip" aria-label="Back 15 seconds" title="Back 15 seconds">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 5V2L7.5 5.5 12 9V6.5a6.5 6.5 0 1 1-6.5 6.5H4a8 8 0 1 0 8-8z" fill="currentColor" />
+                    <text x="12" y="16.2" text-anchor="middle" font-size="6.5" font-weight="700" fill="currentColor">15</text>
+                </svg>
+            </button>
+            <button type="button" id="mp-play" class="mp-play" aria-label="Play">
+                <svg class="mp-icon-play" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M8 5.6v12.8c0 .8.9 1.3 1.6.9l10-6.4a1 1 0 0 0 0-1.8l-10-6.4C8.9 4.3 8 4.8 8 5.6z" fill="currentColor" />
+                </svg>
+                <svg class="mp-icon-pause" viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="6" y="4.5" width="4" height="15" rx="1.2" fill="currentColor" />
+                    <rect x="14" y="4.5" width="4" height="15" rx="1.2" fill="currentColor" />
+                </svg>
+            </button>
+            <button type="button" id="mp-forward" class="mp-skip" aria-label="Forward 15 seconds" title="Forward 15 seconds">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 5V2l4.5 3.5L12 9V6.5a6.5 6.5 0 1 0 6.5 6.5H20a8 8 0 1 1-8-8z" fill="currentColor" />
+                    <text x="12" y="16.2" text-anchor="middle" font-size="6.5" font-weight="700" fill="currentColor">15</text>
+                </svg>
+            </button>
+        </div>
+        <div class="mp-volume">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h3l4-3.5v13L7 15H4z" fill="currentColor" /></svg>
+            <input id="mp-volume" type="range" min="0" max="100" value="35" aria-label="Volume">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 9h3l4-3.5v13L7 15H4z" fill="currentColor" />
+                <path d="M14.5 9a4 4 0 0 1 0 6M17 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
         </div>
     </div>
 
@@ -232,6 +286,7 @@
 
     <!-- Scripts -->
     <script src="scripts/sounds.js"></script>
+    <script src="scripts/music.js"></script>
     <script src="scripts/windowManager.js"></script>
     <script src="scripts/app.js"></script>
 </body>
