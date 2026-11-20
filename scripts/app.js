@@ -72,12 +72,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // setEnabled also saves the choice, so mute survives a refresh
         soundManager.setEnabled(!soundManager.enabled);
         updateSoundUI();
+        // Muting the site also stops the background music
+        if (!soundManager.enabled && typeof musicPlayer !== 'undefined' && musicPlayer) musicPlayer.pause();
         // Small click so turning sound ON gives instant feedback
         soundManager.play('click');
     }
 
     if (toggleSoundEl) toggleSoundEl.addEventListener('click', toggleSound);
     if (volumeIcon) volumeIcon.addEventListener('click', toggleSound);
+    // The music player turns sound back on when someone presses play
+    document.addEventListener('soundsettingchange', updateSoundUI);
     updateSoundUI();
 
     // Close start menu when clicking elsewhere
