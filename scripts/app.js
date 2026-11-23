@@ -253,6 +253,55 @@ document.addEventListener('DOMContentLoaded', () => {
         if (video) video.play().catch(() => { /* browser wants a tap on the play button */ });
     }
 
+    // ---- MIT Portfolio folder ----
+    // The big folder in the middle of the desktop. It gathers what an
+    // MIT Media Lab reviewer needs: each item opens a window that already
+    // exists on the site, except the slides, which open in a new tab.
+    const MIT_SLIDES_URL = 'https://claude.ai/artifact/55gsTHs5wdwBtt1pZ1fjGo';
+    const MIT_ITEMS = [
+        { label: 'Portfolio Slides', icon: 'i-slides', href: MIT_SLIDES_URL },
+        { label: 'Resume', icon: 'i-resume', open: 'resume' },
+        { label: 'My Projects', icon: 'i-projects', open: 'projects' },
+        { label: 'Probability Lab Demo', icon: 'i-mediaplayer', open: 'demo' },
+        { label: 'My Art', icon: 'i-art', open: 'art' },
+        { label: 'About Me', icon: 'i-about', open: 'about' },
+        { label: 'Contact', icon: 'i-contact', open: 'contact' }
+    ];
+
+    function mitFolderHtml() {
+        const items = MIT_ITEMS.map(item => {
+            const inner = `
+                <span class="art-thumb-frame"><svg viewBox="0 0 32 32" aria-hidden="true"><use href="#${item.icon}" /></svg></span>
+                <span class="art-thumb-label">${item.label}</span>`;
+            return item.href
+                ? `<a class="art-thumb" href="${item.href}" target="_blank" rel="noopener noreferrer" title="${item.label} (opens in a new tab)">${inner}</a>`
+                : `<button class="art-thumb" data-open="${item.open}" title="${item.label}">${inner}</button>`;
+        }).join('');
+        return `
+            <div class="art-explorer">
+                <div class="art-toolbar">
+                    <svg viewBox="0 0 32 32"><use href="#i-mit" /></svg>
+                    <span>C:\\Users\\Benjamin\\MIT Portfolio</span>
+                </div>
+                <div class="art-grid mit-grid">${items}</div>
+                <div class="art-status">${MIT_ITEMS.length} objects — Joosung (Benjamin) Park, application to the MIT Media Lab</div>
+            </div>
+        `;
+    }
+
+    function setupMitFolder() {
+        const folder = document.getElementById('win-mit');
+        if (folder.dataset.wired) return;
+        folder.dataset.wired = '1';
+        folder.querySelectorAll('[data-open]').forEach(item => {
+            item.addEventListener('click', () => {
+                const target = item.dataset.open;
+                if (target === 'demo') openDemoVideo();
+                else openContent(target);
+            });
+        });
+    }
+
     // Content Loader
     function openContent(key) {
         const contentMap = {
@@ -318,6 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `,
             'art': artFolderHtml(),
+            'mit': mitFolderHtml(),
             'about': `
                 <h2><svg viewBox="0 0 32 32"><use href="#i-about" /></svg> About Me</h2>
                 <hr>
@@ -407,6 +457,7 @@ Type 'help' to see what's here.</div>
             'resume': 'Resume',
             'projects': 'My Projects',
             'art': 'My Art',
+            'mit': 'MIT Portfolio',
             'about': 'About Me.txt - Notepad',
             'contact': 'Contact',
             'terminal': 'Command Prompt'
@@ -414,12 +465,13 @@ Type 'help' to see what's here.</div>
 
         // The resume, art folder, and terminal windows hold full-bleed app
         // views, so they open without the usual text padding.
-        const flushWindows = ['resume', 'art', 'terminal'];
+        const flushWindows = ['resume', 'art', 'mit', 'terminal'];
 
         if (contentMap[key]) {
             wm.openWindow(key, titleMap[key], contentMap[key], flushWindows.includes(key) ? { flush: true } : {});
             if (key === 'resume') renderResumePdf();
             if (key === 'art') setupArtFolder();
+            if (key === 'mit') setupMitFolder();
             if (key === 'projects') setupProjects();
             if (key === 'terminal') setupTerminal();
             noteWindowOpened(key);
@@ -617,6 +669,7 @@ Type 'help' to see what's here.</div>
                     '  resume        - open the resume window',
                     '  projects      - open the projects window',
                     '  art           - open the art folder',
+                    '  mit           - open the MIT Portfolio folder',
                     '  contact       - open the contact window',
                     '  ls / dir      - list files here',
                     '  cat <file>    - view a file',
@@ -635,12 +688,14 @@ Type 'help' to see what's here.</div>
                 openAndNote('resume', 'Resume');
             } else if (cmd === 'projects') {
                 openAndNote('projects', 'My Projects');
+            } else if (cmd === 'mit') {
+                openAndNote('mit', 'MIT Portfolio');
             } else if (cmd === 'art') {
                 openAndNote('art', 'My Art');
             } else if (cmd === 'contact') {
                 openAndNote('contact', 'Contact');
             } else if (cmd === 'ls' || cmd === 'dir') {
-                print(' Directory of C:\\Users\\Benjamin\n\nresume.pdf\nprojects\\\nart\\\nabout_me.txt\ncontact.txt\nhouse_blueprint.dwg   [in progress]\nsecrets.txt');
+                print(' Directory of C:\\Users\\Benjamin\n\nresume.pdf\nMIT Portfolio\\\nprojects\\\nart\\\nabout_me.txt\ncontact.txt\nhouse_blueprint.dwg   [in progress]\nsecrets.txt');
             } else if (cmd === 'cat') {
                 handleCat(rest);
             } else if (lower === 'sudo make me a sandwich') {

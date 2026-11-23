@@ -68,6 +68,12 @@ body {
         height: 40px;
     }
 
+    /* The MIT Portfolio folder stays big on phones, just a little smaller */
+    .desktop-icon-hero .icon-img {
+        width: 88px;
+        height: 88px;
+    }
+
     .window {
         width: 95vw !important;
         left: 2.5vw !important;
