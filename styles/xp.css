@@ -1271,3 +1271,42 @@ body {
     .mp-round { width: 28px; height: 28px; }
     .mp-big { width: 38px; height: 38px; }
 }
+
+/* ===== MIT PORTFOLIO (big folder in the middle of the desktop) ===== */
+/* Pinned to the center, left of the wallpaper's house and above the figure */
+.desktop-icon.desktop-icon-hero {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%, -50%);
+    width: 150px;
+    padding: 12px 8px 10px;
+}
+
+.desktop-icon-hero .icon-img {
+    width: 112px;
+    height: 112px;
+    margin: 0 auto 6px;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.35));
+}
+
+.desktop-icon-hero .icon-label {
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 0.02em;
+}
+
+/* Folder items are drawn icons, not photos */
+.mit-grid .art-thumb {
+    color: inherit;
+    text-decoration: none;
+}
+
+.mit-grid .art-thumb-frame {
+    background: linear-gradient(to bottom, #FFFFFF, #F1F4FA);
+}
+
+.mit-grid .art-thumb-frame svg {
+    width: 64px;
+    height: 64px;
+}
